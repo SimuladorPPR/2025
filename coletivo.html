@@ -1,830 +1,801 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Simulador PPR 2025 | Coletivo</title>
+  <title>Simulador PPR Coletivo</title>
 
   <style>
     :root{
       --bg:#0f0f10;
-      --panel:#15161a;
-      --panel2:#111217;
+      --panel:#141417;
+      --panel2:#101114;
+      --stroke:rgba(255,255,255,.08);
+      --stroke2:rgba(255,255,255,.12);
       --text:#f5f6f7;
       --muted:#b8bcc6;
-      --muted2:#8b90a0;
       --red:#e60012;
-      --line:rgba(255,255,255,.08);
-      --shadow: 0 10px 24px rgba(0,0,0,.35);
-      --radius: 16px;
-      --radius2: 12px;
-      --focus: 0 0 0 3px rgba(230,0,18,.25);
+
+      --wine1: rgba(125, 0, 18, .55);
+      --wine2: rgba(125, 0, 18, .18);
+
+      --radius:18px;
+      --shadow: 0 14px 34px rgba(0,0,0,.42);
+      --shadow2: 0 10px 24px rgba(0,0,0,.35);
     }
 
-    *{ box-sizing:border-box; }
+    *{box-sizing:border-box}
     body{
       margin:0;
       font-family: Arial, sans-serif;
-      background:
-        radial-gradient(1200px 700px at 15% 0%, rgba(230,0,18,.20), transparent 55%),
-        radial-gradient(900px 600px at 100% 15%, rgba(230,0,18,.10), transparent 60%),
-        var(--bg);
       color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 18% 0%, rgba(230,0,18,.22), transparent 55%),
+        radial-gradient(900px 600px at 100% 18%, rgba(230,0,18,.10), transparent 60%),
+        var(--bg);
     }
 
-    a{ color:inherit; text-decoration:none; }
-    .wrap{ max-width:1200px; margin:0 auto; padding:18px 18px 40px; }
+    .wrap{
+      max-width:1200px;
+      margin:0 auto;
+      padding:22px 18px 34px;
+    }
 
-    /* Topbar */
+    /* Header (padrão sóbrio) */
     .topbar{
-      position: sticky; top:0; z-index:10;
-      background: linear-gradient(to bottom, rgba(15,15,16,.92), rgba(15,15,16,.75));
-      backdrop-filter: blur(10px);
-      border-bottom:1px solid var(--line);
-    }
-    .topbar-inner{
-      max-width:1200px; margin:0 auto;
-      padding:14px 18px;
-      display:flex; align-items:center; gap:14px;
-      justify-content:space-between;
-    }
-    .brand{ display:flex; align-items:center; gap:12px; min-width:240px; }
-    .logo{
-      width:40px; height:40px; border-radius:12px;
-      background: linear-gradient(180deg, rgba(230,0,18,.95), rgba(140,0,10,.95));
-      box-shadow: var(--shadow);
-      display:grid; place-items:center;
-      font-weight:bold;
-      letter-spacing:.5px;
-    }
-    .brand h1{ font-size:16px; margin:0; line-height:1.2; }
-    .brand small{ display:block; margin-top:2px; color:var(--muted); font-size:12px; }
-
-    .nav{
-      display:flex; align-items:center; gap:10px;
-      justify-content:center; flex:1;
-    }
-    .nav a{
-      padding:10px 12px; border-radius:12px;
-      color:var(--muted);
-      border:1px solid transparent;
-    }
-    .nav a:hover{ color:var(--text); border-color:rgba(230,0,18,.35); background:rgba(255,255,255,.03); }
-
-    .pill{
-      display:flex; align-items:center; gap:8px;
-      padding:10px 12px; border-radius:999px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.03);
-      color:var(--muted);
-      font-size:12px;
-      justify-content:flex-end;
-      min-width:240px;
-    }
-
-    /* Hero */
-    .hero{
-      padding:26px 0 14px;
-    }
-    .hero h2{
-      margin:0;
-      font-size:34px;
-      letter-spacing:-.5px;
-    }
-    .hero p{
-      margin:10px 0 0;
-      color:var(--muted);
-      max-width:880px;
-      line-height:1.45;
-    }
-    .hint{
-      margin-top:10px;
-      color:var(--muted2);
-      font-size:13px;
-    }
-
-    /* Layout */
-    .grid{
-      margin-top:18px;
-      display:grid;
-      grid-template-columns: 1.15fr .85fr;
-      gap:18px;
-      align-items:start;
-    }
-    @media (max-width:980px){
-      .grid{ grid-template-columns:1fr; }
-      .brand, .pill{ min-width:auto; }
-    }
-
-    .card{
-      background: rgba(255,255,255,.03);
-      border:1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      overflow:hidden;
-    }
-    .card-h{
-      padding:16px 18px;
-      background: linear-gradient(180deg, rgba(255,255,255,.02), transparent);
-      border-bottom:1px solid var(--line);
-      display:flex; align-items:center; justify-content:space-between; gap:12px;
-    }
-    .card-h h3{ margin:0; font-size:16px; }
-    .card-b{ padding:18px; }
-
-    /* Inputs */
-    .inputs{
-      display:grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap:12px;
-    }
-    @media (max-width:980px){
-      .inputs{ grid-template-columns: repeat(2, 1fr); }
-    }
-    @media (max-width:520px){
-      .inputs{ grid-template-columns:1fr; }
-    }
-
-    .field{
-      background: rgba(0,0,0,.18);
-      border:1px solid var(--line);
-      border-radius: var(--radius2);
-      padding:12px;
-    }
-    .label{
-      font-size:12px;
-      color:var(--muted);
-      margin-bottom:8px;
-      display:flex; justify-content:space-between; gap:8px;
-    }
-    .label span:last-child{ color:var(--muted2); }
-    .control{
-      display:flex; align-items:center; gap:10px;
-    }
-    input[type="number"], input[type="text"]{
-      width:100%;
-      padding:12px 12px;
-      border-radius:12px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.35);
-      color: var(--text);
-      outline:none;
-      font-weight:700;
-      font-size:14px;
-    }
-    input[type="number"]:focus, input[type="text"]:focus{
-      border-color: rgba(230,0,18,.55);
-      box-shadow: var(--focus);
-    }
-
-    .btns{
-      display:flex; gap:10px; flex-wrap:wrap;
-      margin-top:12px;
-    }
-    .btn{
-      border:none; cursor:pointer;
-      padding:11px 14px;
-      border-radius:12px;
-      font-weight:700;
-      font-size:13px;
-      color:#fff;
-      background: rgba(255,255,255,.10);
-      border:1px solid rgba(255,255,255,.12);
-    }
-    .btn:hover{ filter:brightness(1.05); }
-    .btn:active{ transform: translateY(1px); }
-    .btn.red{
-      background: var(--red);
-      border-color: rgba(230,0,18,.65);
-    }
-
-    /* Formula boxes */
-    .formula{
-      margin-top:18px;
-      display:flex; flex-wrap:wrap;
-      gap:10px;
+      display:flex;
       align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      padding:14px 16px;
+      border:1px solid var(--stroke);
+      border-radius:22px;
+      background: linear-gradient(135deg, rgba(255,255,255,.03), rgba(125,0,18,.10));
+      box-shadow: var(--shadow2);
+      backdrop-filter: blur(10px);
     }
-    .box{
-      min-width: 140px;
-      background: linear-gradient(180deg, rgba(230,0,18,.95), rgba(160,0,12,.95));
-      border:1px solid rgba(230,0,18,.55);
-      border-radius: 14px;
-      padding:12px 12px;
-      box-shadow: var(--shadow);
-      text-align:center;
+    .brand{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+      min-width: 220px;
     }
-    .box .t{ font-size:12px; opacity:.95; }
-    .box .v{ font-size:18px; font-weight:900; margin-top:6px; }
-    .op{
-      color: var(--muted);
-      font-weight:900;
-      padding:0 2px;
-      font-size:18px;
+    .brand .t1{
+      font-size:16px;
+      font-weight:700;
+      letter-spacing:.2px;
     }
-    .box.gray{
-      background: rgba(255,255,255,.04);
-      border-color: rgba(255,255,255,.10);
+    .brand .t2{
+      font-size:12px;
+      color:var(--muted);
     }
-
-    .result{
-      margin-top:14px;
-      background: rgba(0,0,0,.45);
-      border:1px solid rgba(255,255,255,.12);
-      border-radius: 16px;
-      padding:16px 18px;
-      display:flex; align-items:center; justify-content:space-between; gap:12px;
-    }
-    .result .left small{ display:block; color:var(--muted); font-size:12px; }
-    .result .left strong{ display:block; font-size:14px; margin-top:2px; }
-    .result .val{
-      font-size:26px;
-      font-weight:900;
-      letter-spacing:-.3px;
+    .badge{
+      margin-left:auto;
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background:rgba(0,0,0,.25);
+      color:var(--muted);
+      font-size:12px;
       white-space:nowrap;
     }
 
     .actions{
-      display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
     }
-    .chip{
-      display:inline-flex; align-items:center; gap:8px;
+    .btn{
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.04);
+      color:var(--text);
       padding:10px 12px;
-      border-radius:12px;
-      background: rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.10);
-      color: var(--text);
-      font-weight:700;
+      border-radius:14px;
       cursor:pointer;
+      font-weight:700;
+      font-size:13px;
+      transition:.2s;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      user-select:none;
+    }
+    .btn:hover{ transform: translateY(-1px); border-color: rgba(230,0,18,.55); }
+    .btn.primary{
+      background:var(--red);
+      border-color:transparent;
+    }
+    .btn.primary:hover{ filter:brightness(1.05); }
+
+    /* Layout */
+    .grid{
+      margin-top:16px;
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap:16px;
+    }
+    @media (max-width: 980px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    .card{
+      border:1px solid var(--stroke);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.03);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    /* Header interno (degradê vinho) */
+    .cardHead{
+      padding:16px 16px 14px;
+      background:
+        radial-gradient(900px 260px at 10% 0%, var(--wine1), transparent 60%),
+        linear-gradient(90deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+      border-bottom:1px solid var(--stroke);
+    }
+    .cardHeadRow{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .hTitle{
+      font-size:18px;
+      font-weight:800;
+      margin:0;
+    }
+    .hSub{
+      margin-top:6px;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.35;
+    }
+
+    .valueBox{
+      padding:14px 16px 18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      flex-wrap:wrap;
+    }
+    .bigValue{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      min-width: 240px;
+    }
+    .bigValue .label{
+      color:var(--muted);
+      font-size:12px;
+    }
+    .bigValue .money{
+      font-size:44px;
+      font-weight:900;
+      letter-spacing:.4px;
+      line-height:1;
+    }
+    .bigValue .baseLine{
+      color:var(--muted);
+      font-size:12px;
+    }
+
+    .form{
+      padding:0 16px 16px;
+    }
+
+    .fields{
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap:12px;
+    }
+    @media (max-width: 980px){
+      .fields{ grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 520px){
+      .fields{ grid-template-columns: 1fr; }
+    }
+
+    .field{
+      padding:12px;
+      border-radius:16px;
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.22);
+    }
+    .fieldTop{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:10px;
+    }
+    .fieldTop .name{
+      font-weight:800;
       font-size:13px;
     }
-    .chip:hover{ border-color: rgba(230,0,18,.35); }
-    .chip.muted{ color:var(--muted); font-weight:700; }
+    .fieldTop .hint{
+      font-size:12px;
+      color:var(--muted);
+      white-space:nowrap;
+    }
+    input[type="text"], input[type="number"]{
+      width:100%;
+      border-radius:14px;
+      border:1px solid var(--stroke2);
+      padding:12px 12px;
+      font-size:16px;
+      color:var(--text);
+      background: rgba(0,0,0,.35);
+      outline:none;
+    }
+    input:focus{
+      border-color: rgba(230,0,18,.65);
+      box-shadow: 0 0 0 3px rgba(230,0,18,.12);
+    }
 
-    /* Right tables */
+    /* Blocos de fórmula */
+    .formula{
+      padding: 0 16px 18px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+    .rowFormula{
+      display:flex;
+      flex-wrap:wrap;
+      align-items:center;
+      gap:10px;
+    }
+    .chip{
+      min-width: 170px;
+      flex: 1 1 170px;
+      padding:14px 14px;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.06);
+      background: rgba(0,0,0,.25);
+      text-align:center;
+    }
+    .chip.red{
+      background: rgba(230,0,18,.85);
+      border-color: rgba(230,0,18,.35);
+    }
+    .chip .c1{
+      font-weight:900;
+      font-size:16px;
+      margin-bottom:6px;
+    }
+    .chip .c2{
+      font-weight:900;
+      font-size:28px;
+      letter-spacing:.4px;
+    }
+    .op{
+      font-size:22px;
+      font-weight:900;
+      opacity:.75;
+      padding: 0 4px;
+    }
+
+    /* Painel direito */
+    .sideBody{
+      padding:16px;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+    }
+    .tableCard{
+      border:1px solid var(--stroke);
+      border-radius:18px;
+      background: rgba(0,0,0,.22);
+      overflow:hidden;
+    }
+    .tableHead{
+      padding:14px 14px;
+      font-weight:900;
+      font-size:14px;
+      border-bottom:1px solid var(--stroke);
+      background:
+        radial-gradient(900px 220px at 10% 0%, var(--wine2), transparent 62%),
+        rgba(255,255,255,.02);
+    }
     table{
       width:100%;
       border-collapse:collapse;
-      overflow:hidden;
-      border-radius: 14px;
-      border:1px solid var(--line);
-      background: rgba(0,0,0,.18);
     }
     th, td{
-      padding:12px 12px;
-      border-bottom:1px solid var(--line);
+      padding:11px 12px;
+      border-bottom:1px solid rgba(255,255,255,.06);
       text-align:left;
       font-size:13px;
     }
-    th{ color:var(--muted); font-weight:800; background: rgba(255,255,255,.03); }
+    th{ color:var(--muted); font-weight:800; }
     tr:last-child td{ border-bottom:none; }
 
-    .stack{ display:flex; flex-direction:column; gap:12px; }
-
-    /* Occurrences UX */
-    .occ-head{
-      display:flex; gap:10px; flex-wrap:wrap;
-      align-items:center; justify-content:space-between;
-      margin-bottom:12px;
-    }
-    .search{
-      flex:1; min-width:220px;
-      display:flex; align-items:center; gap:10px;
-      background: rgba(0,0,0,.20);
-      border:1px solid var(--line);
-      border-radius:12px;
-      padding:10px 12px;
-    }
-    .search input{
-      border:none; background:transparent; padding:0;
-      font-weight:700;
-    }
-    .search input:focus{ box-shadow:none; }
-
-    .mini{
-      color:var(--muted);
-      font-size:12px;
-      white-space:nowrap;
-    }
-
-    .occ-list{
-      display:flex; flex-direction:column; gap:10px;
-    }
-    .occ-item{
-      display:grid;
-      grid-template-columns: 74px 1fr 140px;
+    /* Ocorrências */
+    .occTools{
+      display:flex;
       gap:10px;
+      flex-wrap:wrap;
       align-items:center;
-      padding:12px;
-      border-radius:14px;
-      border:1px solid var(--line);
+      padding:12px 12px;
+      border-bottom:1px solid rgba(255,255,255,.06);
       background: rgba(255,255,255,.02);
     }
-    @media (max-width:560px){
-      .occ-item{ grid-template-columns: 74px 1fr; }
-      .occ-item .qty{ grid-column: 1 / -1; }
+    .occTools input{
+      flex: 1 1 220px;
+      min-width: 220px;
     }
-    .code{
-      font-weight:900;
-      color:var(--text);
-      background: rgba(0,0,0,.28);
-      border:1px solid rgba(255,255,255,.08);
-      border-radius:12px;
-      padding:10px 10px;
-      text-align:center;
+    .miniNote{
+      color:var(--muted);
+      font-size:12px;
+      padding: 0 12px 12px;
+      line-height:1.35;
     }
-    .desc{
-      line-height:1.25;
-    }
-    .desc b{ display:block; font-size:13px; }
-    .desc small{ color:var(--muted); font-size:12px; }
-
     .qty{
-      display:flex; align-items:center; gap:8px;
-      justify-content:flex-end;
+      width:92px;
+      text-align:right;
     }
-    .step{
-      width:36px; height:36px;
-      border-radius:12px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.35);
-      color:var(--text);
-      cursor:pointer;
-      font-weight:900;
-    }
-    .step:hover{ border-color: rgba(230,0,18,.35); }
     .qty input{
-      width:70px;
-      text-align:center;
-      padding:10px 8px;
-      font-weight:900;
+      width:100%;
+      padding:10px 10px;
+      border-radius:12px;
+      font-size:14px;
+    }
+    .codeCell{
+      width:92px;
+      color:var(--muted);
+      font-weight:800;
     }
 
-    .note{
-      margin-top:12px;
+    .footerNote{
+      margin-top:14px;
       color:var(--muted);
       font-size:12px;
       line-height:1.4;
+      padding: 0 6px;
     }
 
     .toast{
       position: fixed;
-      bottom: 16px;
-      right: 16px;
-      background: rgba(0,0,0,.72);
-      border:1px solid rgba(255,255,255,.14);
-      padding:12px 14px;
-      border-radius:14px;
-      color:var(--text);
-      box-shadow: var(--shadow);
-      display:none;
-      max-width: 320px;
-      font-size:13px;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(0,0,0,.75);
+      border: 1px solid rgba(255,255,255,.12);
+      color: var(--text);
+      font-size: 13px;
+      opacity: 0;
+      pointer-events: none;
+      transition: .25s;
+      box-shadow: var(--shadow2);
     }
-    .toast.show{ display:block; }
+    .toast.show{ opacity:1; }
+
   </style>
 </head>
 
 <body>
-  <div class="topbar">
-    <div class="topbar-inner">
+  <div class="wrap">
+
+    <div class="topbar">
       <div class="brand">
-        <div class="logo">KOF</div>
-        <div>
-          <h1>Simulador PPR 2025</h1>
-          <small>Público 3 | Coletivo (com ocorrências e faltas)</small>
-        </div>
+        <div class="t1">Simulador PPR 2025</div>
+        <div class="t2">Coletivo (com ocorrências e faltas)</div>
       </div>
 
-      <nav class="nav">
-        <a href="index.html">Home</a>
-        <a href="coletivo.html" style="color:var(--text);">PPR Coletivo 2025</a>
-        <a href="#regras">Regras</a>
-      </nav>
+      <div class="actions">
+        <button class="btn" id="btnHome" type="button">Home</button>
+        <button class="btn primary" id="btnCopy" type="button">Copiar valor</button>
+        <button class="btn" id="btnReset" type="button">Resetar</button>
+      </div>
 
-      <div class="pill">Valores arredondados • Simulação</div>
-    </div>
-  </div>
-
-  <div class="wrap">
-    <div class="hero">
-      <h2>Preencha abaixo e clique em Calcular</h2>
-      <p>
-        Este público considera: <b>Resultado Coletivo</b>, <b>Extra por Ocorrência</b> (pela faixa total de ocorrências) e <b>Coeficiente por Faltas Não Justificadas</b>.
-      </p>
-      <div class="hint">Dica: preencha as ocorrências para o Extra ser calculado automaticamente.</div>
+      <div class="badge">Coca-Cola FEMSA • Uso interno</div>
     </div>
 
     <div class="grid">
-      <!-- Left: simulator -->
+
+      <!-- ESQUERDA -->
       <div class="card">
-        <div class="card-h">
-          <h3>Simulador PPR Coletivo</h3>
-          <div class="actions">
-            <a class="chip muted" href="index.html">⌂ Home</a>
-            <button class="chip" id="copyBtn" type="button">Copiar valor</button>
-            <button class="chip muted" id="resetBtn" type="button">Resetar</button>
+        <div class="cardHead">
+          <div class="cardHeadRow">
+            <h2 class="hTitle">Simulador PPR Coletivo</h2>
+          </div>
+          <div class="hSub">
+            Considera: <b>Resultado Coletivo</b>, <b>Extra por Ocorrência</b> (calculado pela soma das ocorrências) e <b>Coeficiente por Faltas Não Justificadas</b>.
           </div>
         </div>
 
-        <div class="card-b">
-          <div class="inputs">
+        <div class="valueBox">
+          <div class="bigValue">
+            <div class="label">Seu PPR estimado</div>
+            <div class="money" id="pprBig">R$ 0</div>
+            <div class="baseLine" id="baseLine">Base: Salário Dez/25 • Meses • Resultado Coletivo • Extra • Coef. Faltas</div>
+          </div>
+        </div>
+
+        <div class="form">
+          <div class="fields">
             <div class="field">
-              <div class="label">
-                <span>Resultado Coletivo</span><span>ex: 1,00</span>
+              <div class="fieldTop">
+                <div class="name">Resultado Coletivo</div>
+                <div class="hint">ex: 1,00</div>
               </div>
-              <input id="resultadoColetivo" type="number" step="0.0001" value="1" />
+              <input id="inpColetivo" type="text" inputmode="decimal" placeholder="1,00" />
             </div>
 
             <div class="field">
-              <div class="label">
-                <span>Salário Dez/25 (R$)</span><span>digite seu valor</span>
+              <div class="fieldTop">
+                <div class="name">Salário Dez/25 (R$)</div>
+                <div class="hint">digite seu valor</div>
               </div>
-              <input id="salario" type="number" step="0.01" placeholder="Ex: 3500" />
+              <input id="inpSalario" type="text" inputmode="decimal" placeholder="0,00" />
             </div>
 
             <div class="field">
-              <div class="label">
-                <span>Meses Trabalhados</span><span>1–12</span>
+              <div class="fieldTop">
+                <div class="name">Meses Trabalhados</div>
+                <div class="hint">1–12</div>
               </div>
-              <input id="meses" type="number" min="1" max="12" step="1" value="12" />
+              <input id="inpMeses" type="number" min="1" max="12" step="1" placeholder="12" />
             </div>
 
             <div class="field">
-              <div class="label">
-                <span>Faltas Não Justificadas</span><span>0+</span>
+              <div class="fieldTop">
+                <div class="name">Faltas Não Justificadas</div>
+                <div class="hint">0+</div>
               </div>
-              <input id="faltas" type="number" min="0" step="1" value="0" />
+              <input id="inpFaltas" type="number" min="0" step="1" placeholder="0" />
             </div>
           </div>
+        </div>
 
-          <div class="btns">
-            <button class="btn red" id="calcBtn" type="button">Calcular</button>
-            <button class="btn" id="clearBtn" type="button">Limpar</button>
-          </div>
-
-          <!-- Formula preview -->
-          <div class="formula" aria-label="Fórmula">
-            <div class="box">
-              <div class="t">Coletivo</div>
-              <div class="v" id="boxColetivo">1,0000</div>
+        <div class="formula">
+          <div class="rowFormula">
+            <div class="chip red">
+              <div class="c1">Coletivo</div>
+              <div class="c2" id="vColetivo">0,0000</div>
             </div>
+
             <div class="op">+</div>
-            <div class="box">
-              <div class="t">Extra</div>
-              <div class="v" id="boxExtra">0,2000</div>
+
+            <div class="chip red">
+              <div class="c1">Extra</div>
+              <div class="c2" id="vExtra">0,0000</div>
             </div>
+
             <div class="op">×</div>
-            <div class="box">
-              <div class="t">Coef. Faltas</div>
-              <div class="v" id="boxCoef">1,00</div>
+
+            <div class="chip red">
+              <div class="c1">Coef. Faltas</div>
+              <div class="c2" id="vCoef">0,00</div>
             </div>
+          </div>
+
+          <div class="rowFormula">
+            <div class="chip red">
+              <div class="c1">Salário</div>
+              <div class="c2" id="vSalario">R$ 0,00</div>
+            </div>
+
             <div class="op">×</div>
-            <div class="box">
-              <div class="t">Salário</div>
-              <div class="v" id="boxSalario">R$ 0,00</div>
+
+            <div class="chip">
+              <div class="c1">Meses/12</div>
+              <div class="c2" id="vMeses">0/12</div>
             </div>
-            <div class="op">×</div>
-            <div class="box gray">
-              <div class="t">Meses/12</div>
-              <div class="v" id="boxMeses">12/12</div>
-            </div>
+
             <div class="op">=</div>
-            <div class="box gray">
-              <div class="t">PPR (R$)</div>
-              <div class="v" id="boxPPR">R$ 0,00</div>
+
+            <div class="chip">
+              <div class="c1">PPR (R$)</div>
+              <div class="c2" id="vPpr">R$ 0,00</div>
             </div>
           </div>
 
-          <div class="result">
-            <div class="left">
-              <small>Seu PPR estimado</small>
-              <strong>Resultado Final</strong>
-            </div>
-            <div class="val" id="resultadoFinal">R$ 0,00</div>
+          <div class="footerNote">
+            Valores arredondados para exibição. Pode haver desconto de IR e contribuições conforme regras vigentes.
           </div>
-
-          <!-- Occurrences -->
-          <div class="card" style="margin-top:16px;">
-            <div class="card-h">
-              <h3>Tipos de Ocorrência (preencha as quantidades)</h3>
-              <div class="mini">Total ocorrências: <b id="totalOcorrencias">0,00</b> • Extra: <b id="extraAuto">0,2000</b></div>
-            </div>
-            <div class="card-b">
-              <div class="occ-head">
-                <div class="search" title="Buscar por código ou descrição">
-                  🔎
-                  <input id="searchOcc" type="text" placeholder="Buscar (ex: 350, licença, suspensão...)" />
-                </div>
-                <div class="btns" style="margin:0;">
-                  <button class="btn" id="zeroAllBtn" type="button">Zerar quantidades</button>
-                </div>
-              </div>
-
-              <div class="occ-list" id="occList"></div>
-
-              <div class="note" id="regras">
-                <b>Regras do Extra (por faixa de ocorrências):</b>
-                0,0–0,99 → 0,20 • 1,0–2,99 → 0,15 • 3,0–4,99 → 0,10 • 5,0–6,99 → 0,05 • ≥7,00 → 0
-                <br><br>
-                <b>Observações:</b> valores são estimativas e podem variar conforme regras vigentes, IR e acordos sindicais.
-              </div>
-            </div>
-          </div>
-
         </div>
       </div>
 
-      <!-- Right: tables -->
-      <div class="stack">
-        <div class="card">
-          <div class="card-h">
-            <h3>Valor do Extra por Ocorrência</h3>
-          </div>
-          <div class="card-b">
-            <table aria-label="Tabela de Extra">
+      <!-- DIREITA -->
+      <div class="card">
+        <div class="sideBody">
+
+          <div class="tableCard">
+            <div class="tableHead">Valor do Extra por Ocorrência</div>
+            <table>
               <thead>
                 <tr>
                   <th>Quantidade de Ocorrências</th>
-                  <th>Valor do Extra</th>
+                  <th style="text-align:right">Valor do Extra</th>
                 </tr>
               </thead>
               <tbody>
-                <tr><td>0,0 a 0,99</td><td>0,20</td></tr>
-                <tr><td>1,0 a 2,99</td><td>0,15</td></tr>
-                <tr><td>3,0 a 4,99</td><td>0,10</td></tr>
-                <tr><td>5,0 a 6,99</td><td>0,05</td></tr>
-                <tr><td>&ge; 7,00</td><td>0</td></tr>
+                <tr><td>0,0 a 0,99</td><td style="text-align:right">0,20</td></tr>
+                <tr><td>1,0 a 2,99</td><td style="text-align:right">0,15</td></tr>
+                <tr><td>3,0 a 4,99</td><td style="text-align:right">0,10</td></tr>
+                <tr><td>5,0 a 6,99</td><td style="text-align:right">0,05</td></tr>
+                <tr><td>&ge; 7,00</td><td style="text-align:right">0</td></tr>
               </tbody>
             </table>
           </div>
-        </div>
 
-        <div class="card">
-          <div class="card-h">
-            <h3>Coeficiente por Faltas Não Justificadas</h3>
-          </div>
-          <div class="card-b">
-            <table aria-label="Tabela de Coeficiente">
+          <div class="tableCard">
+            <div class="tableHead">Coeficiente por Faltas Não Justificadas</div>
+            <table>
               <thead>
                 <tr>
                   <th>Faltas Não Justificadas</th>
-                  <th>Valor do Coeficiente</th>
+                  <th style="text-align:right">Valor do Coeficiente</th>
                 </tr>
               </thead>
               <tbody>
-                <tr><td>0</td><td>1,00</td></tr>
-                <tr><td>1</td><td>0,95</td></tr>
-                <tr><td>2</td><td>0,90</td></tr>
-                <tr><td>3</td><td>0,85</td></tr>
-                <tr><td>4</td><td>0,80</td></tr>
-                <tr><td>5</td><td>0,75</td></tr>
-                <tr><td>&ge; 6</td><td>0</td></tr>
+                <tr><td>0</td><td style="text-align:right">1,00</td></tr>
+                <tr><td>1</td><td style="text-align:right">0,95</td></tr>
+                <tr><td>2</td><td style="text-align:right">0,90</td></tr>
+                <tr><td>3</td><td style="text-align:right">0,85</td></tr>
+                <tr><td>4</td><td style="text-align:right">0,80</td></tr>
+                <tr><td>5</td><td style="text-align:right">0,75</td></tr>
+                <tr><td>&ge; 6</td><td style="text-align:right">0</td></tr>
               </tbody>
             </table>
           </div>
-        </div>
 
+          <div class="tableCard" id="occCard">
+            <div class="tableHead">Tipos de Ocorrência (preencha as quantidades)</div>
+
+            <div class="occTools">
+              <input id="occSearch" type="text" placeholder="Buscar por código ou descrição..." />
+              <button class="btn" id="btnZerarOc" type="button">Zerar ocorrências</button>
+            </div>
+
+            <div class="miniNote">
+              Dica: informe apenas o que você teve no ano. A soma das ocorrências define automaticamente o <b>Extra</b>.
+            </div>
+
+            <table>
+              <thead>
+                <tr>
+                  <th style="width:92px">Cód</th>
+                  <th>Descrição</th>
+                  <th style="text-align:right;width:120px">Qtd</th>
+                </tr>
+              </thead>
+              <tbody id="occBody"></tbody>
+            </table>
+          </div>
+
+        </div>
       </div>
+
     </div>
+
   </div>
 
-  <div class="toast" id="toast"></div>
+  <div class="toast" id="toast">Copiado.</div>
 
   <script>
-    // ----- Data -----
-    const OCCURRENCES = [
-      { code: "210",  desc: "Licença Médica INSS",                 weight: 1 },
-      { code: "340",  desc: "Suspensão",                           weight: 1 },
-      { code: "350",  desc: "Faltas não justificadas s/ DSR",      weight: 1 },
-      { code: "351",  desc: "Faltas não justificadas s/ DSR",      weight: 1 },
-      { code: "360",  desc: "Faltas Justificadas",                 weight: 1 },
-      { code: "380",  desc: "Licença remunerada",                  weight: 1 },
-      { code: "382",  desc: "Susp. Contrato CLT x Estat",          weight: 1 },
-      { code: "385",  desc: "Licença remunerada s/ dedução",       weight: 1 },
-      { code: "390",  desc: "Licença não remunerada",              weight: 1 },
-      { code: "395",  desc: "Afastamento Reclusão",                weight: 1 },
-      { code: "9390", desc: "Lic. não remunerada / Inquérito",     weight: 1 },
-      { code: "9400", desc: "Suspensão Contrato Trabalho",         weight: 1 },
-      { code: "9410", desc: "Aposentadoria por Invalidez",         weight: 1 },
-    ];
+    // ---------- Helpers ----------
+    const $ = (id)=>document.getElementById(id);
 
-    function coefByFaltas(f){
-      const n = Math.max(0, Math.floor(Number(f || 0)));
-      if (n === 0) return 1.00;
-      if (n === 1) return 0.95;
-      if (n === 2) return 0.90;
-      if (n === 3) return 0.85;
-      if (n === 4) return 0.80;
-      if (n === 5) return 0.75;
-      return 0.00; // >= 6
+    function showToast(msg){
+      const t = $("toast");
+      t.textContent = msg;
+      t.classList.add("show");
+      setTimeout(()=>t.classList.remove("show"), 1400);
     }
 
-    function extraByOcc(total){
-      const t = Number(total || 0);
-      if (t < 1.0) return 0.20;
-      if (t < 3.0) return 0.15;
-      if (t < 5.0) return 0.10;
-      if (t < 7.0) return 0.05;
+    function clamp(n, min, max){
+      n = Number.isFinite(n) ? n : min;
+      return Math.min(max, Math.max(min, n));
+    }
+
+    // aceita "1,23" e "1.23"
+    function parseBRDecimal(v){
+      if(v==null) return 0;
+      const s = String(v).trim()
+        .replace(/\./g, "")      // remove separador milhar (se houver)
+        .replace(",", ".");      // decimal
+      const n = Number(s);
+      return Number.isFinite(n) ? n : 0;
+    }
+
+    function formatBR(n, decimals=2){
+      const x = Number.isFinite(n) ? n : 0;
+      return x.toLocaleString("pt-BR", {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals
+      });
+    }
+
+    function formatMoney(n){
+      const x = Number.isFinite(n) ? n : 0;
+      return "R$ " + x.toLocaleString("pt-BR", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+
+    // ---------- Regras ----------
+    function extraByOccurrences(total){
+      // faixas conforme especificação
+      if(total < 1) return 0.20;
+      if(total < 3) return 0.15;
+      if(total < 5) return 0.10;
+      if(total < 7) return 0.05;
       return 0.00;
     }
 
-    // ----- UI Helpers -----
-    const brMoney = (v) => {
-      const n = Number(v || 0);
-      return n.toLocaleString("pt-BR", { style:"currency", currency:"BRL" });
-    };
-    const brDec = (v, d=4) => Number(v || 0).toLocaleString("pt-BR", { minimumFractionDigits:d, maximumFractionDigits:d });
-    const brDec2 = (v) => Number(v || 0).toLocaleString("pt-BR", { minimumFractionDigits:2, maximumFractionDigits:2 });
-
-    function toast(msg){
-      const t = document.getElementById("toast");
-      t.textContent = msg;
-      t.classList.add("show");
-      clearTimeout(window.__toastTimer);
-      window.__toastTimer = setTimeout(()=>t.classList.remove("show"), 1800);
+    function coefByFaltas(f){
+      if(f <= 0) return 1.00;
+      if(f === 1) return 0.95;
+      if(f === 2) return 0.90;
+      if(f === 3) return 0.85;
+      if(f === 4) return 0.80;
+      if(f === 5) return 0.75;
+      return 0.00; // >= 6
     }
 
-    // ----- Build occurrences list -----
-    const occList = document.getElementById("occList");
-    const occState = {}; // code -> qty (number)
+    // Tipos de ocorrência (peso 1 conforme lista recebida)
+    const OCC = [
+      { code: "210",  desc: "Licença Médica INSS" },
+      { code: "340",  desc: "Suspensão" },
+      { code: "350",  desc: "Faltas não justificadas s/ DSR" },
+      { code: "351",  desc: "Faltas não justificadas s/ DSR" },
+      { code: "360",  desc: "Faltas Justificadas" },
+      { code: "380",  desc: "Licença remunerada" },
+      { code: "382",  desc: "Suspensão Contrato CLT x Estat" },
+      { code: "385",  desc: "Licença remunerada s/ dedução" },
+      { code: "390",  desc: "Licença não remunerada" },
+      { code: "395",  desc: "Afastamento Reclusão" },
+      { code: "9390", desc: "Licença não remunerada / Inquérito" },
+      { code: "9400", desc: "Suspensão Contrato de Trabalho" },
+      { code: "9410", desc: "Aposentadoria por Invalidez" },
+    ];
 
-    function buildOccurrences(){
-      occList.innerHTML = "";
-      OCCURRENCES.forEach((o) => {
-        occState[o.code] = occState[o.code] ?? 0;
+    const occState = Object.fromEntries(OCC.map(o=>[o.code, 0]));
 
-        const item = document.createElement("div");
-        item.className = "occ-item";
-        item.dataset.search = (o.code + " " + o.desc).toLowerCase();
+    function renderOccurrences(filter=""){
+      const body = $("occBody");
+      body.innerHTML = "";
 
-        item.innerHTML = `
-          <div class="code">${o.code}</div>
-          <div class="desc">
-            <b>${o.desc}</b>
-            <small>Peso: ${o.weight}</small>
-          </div>
-          <div class="qty">
-            <button class="step" type="button" aria-label="Diminuir">−</button>
-            <input type="number" min="0" step="1" value="${occState[o.code]}" aria-label="Quantidade"/>
-            <button class="step" type="button" aria-label="Aumentar">+</button>
-          </div>
-        `;
+      const f = filter.trim().toLowerCase();
 
-        const [btnMinus, inputQty, btnPlus] = item.querySelectorAll(".qty .step, .qty input");
-
-        btnMinus.addEventListener("click", () => {
-          const v = Math.max(0, (Number(inputQty.value||0) - 1));
-          inputQty.value = v;
-          occState[o.code] = v;
-          refreshOccTotals();
-        });
-        btnPlus.addEventListener("click", () => {
-          const v = Math.max(0, (Number(inputQty.value||0) + 1));
-          inputQty.value = v;
-          occState[o.code] = v;
-          refreshOccTotals();
-        });
-        inputQty.addEventListener("input", () => {
-          const v = Math.max(0, Math.floor(Number(inputQty.value || 0)));
-          inputQty.value = v;
-          occState[o.code] = v;
-          refreshOccTotals();
-        });
-
-        occList.appendChild(item);
+      const rows = OCC.filter(o=>{
+        if(!f) return true;
+        return o.code.toLowerCase().includes(f) || o.desc.toLowerCase().includes(f);
       });
 
-      refreshOccTotals();
-    }
+      rows.forEach(o=>{
+        const tr = document.createElement("tr");
 
-    function refreshOccTotals(){
-      // total de ocorrências ponderadas
-      let total = 0;
-      for (const o of OCCURRENCES){
-        const q = Number(occState[o.code] || 0);
-        total += q * Number(o.weight || 1);
-      }
-      // para manter compatível com faixas decimais, exibimos com 2 casas
-      document.getElementById("totalOcorrencias").textContent = brDec2(total);
-      const extra = extraByOcc(total);
-      document.getElementById("extraAuto").textContent = brDec(extra, 4);
+        const tdCode = document.createElement("td");
+        tdCode.className = "codeCell";
+        tdCode.textContent = o.code;
 
-      // atualiza preview (sem necessariamente calcular PPR)
-      document.getElementById("boxExtra").textContent = brDec(extra, 4);
-    }
+        const tdDesc = document.createElement("td");
+        tdDesc.textContent = o.desc;
 
-    // Search filter
-    document.getElementById("searchOcc").addEventListener("input", (e) => {
-      const q = (e.target.value || "").toLowerCase().trim();
-      const items = occList.querySelectorAll(".occ-item");
-      items.forEach(it => {
-        it.style.display = it.dataset.search.includes(q) ? "" : "none";
+        const tdQty = document.createElement("td");
+        tdQty.className = "qty";
+
+        const inp = document.createElement("input");
+        inp.type = "number";
+        inp.min = "0";
+        inp.step = "1";
+        inp.value = occState[o.code] ?? 0;
+        inp.addEventListener("input", ()=>{
+          const v = Math.max(0, Math.floor(Number(inp.value || 0)));
+          occState[o.code] = v;
+          calcRealtime();
+        });
+
+        tdQty.style.textAlign = "right";
+        tdQty.appendChild(inp);
+
+        tr.appendChild(tdCode);
+        tr.appendChild(tdDesc);
+        tr.appendChild(tdQty);
+
+        body.appendChild(tr);
       });
-    });
-
-    document.getElementById("zeroAllBtn").addEventListener("click", () => {
-      for (const k in occState) occState[k] = 0;
-      buildOccurrences();
-      toast("Ocorrências zeradas.");
-    });
-
-    // ----- Main calc -----
-    function getTotalOcc(){
-      let total = 0;
-      for (const o of OCCURRENCES){
-        total += Number(occState[o.code] || 0) * Number(o.weight || 1);
-      }
-      return total;
     }
 
-    function calc(){
-      const coletivo = Number(document.getElementById("resultadoColetivo").value || 0);
-      const salario = Number(document.getElementById("salario").value || 0);
-      const meses = Math.min(12, Math.max(0, Number(document.getElementById("meses").value || 0)));
-      const faltas = Number(document.getElementById("faltas").value || 0);
+    function totalOccurrences(){
+      return Object.values(occState).reduce((a,b)=>a + (Number(b)||0), 0);
+    }
 
-      const coef = coefByFaltas(faltas);
-      const extra = extraByOcc(getTotalOcc());
+    // ---------- Cálculo em tempo real ----------
+    function calcRealtime(){
+      const coletivo = parseBRDecimal($("inpColetivo").value);
+      const salario  = parseBRDecimal($("inpSalario").value);
+      const meses    = clamp(parseInt($("inpMeses").value || "0", 10), 0, 12);
+      const faltas   = Math.max(0, parseInt($("inpFaltas").value || "0", 10));
 
-      // (Coletivo + Extra) × Coef × Salário × (Meses/12)
+      const occTotal = totalOccurrences();
+      const extra = extraByOccurrences(occTotal);
+      const coef  = coefByFaltas(faltas);
+
+      // Fórmula:
+      // PPR = Salário * (Meses/12) * (ResultadoColetivo + Extra) * CoefFaltas
       const base = (coletivo + extra) * coef;
-      const ppr = base * salario * (meses / 12);
+      const ppr  = salario * (meses/12) * base;
 
-      // UI
-      document.getElementById("boxColetivo").textContent = brDec(coletivo, 4);
-      document.getElementById("boxExtra").textContent = brDec(extra, 4);
-      document.getElementById("boxCoef").textContent = brDec2(coef);
-      document.getElementById("boxSalario").textContent = brMoney(salario);
-      document.getElementById("boxMeses").textContent = `${Math.round(meses)}/12`;
-      document.getElementById("boxPPR").textContent = brMoney(ppr);
-      document.getElementById("resultadoFinal").textContent = brMoney(ppr);
+      $("vColetivo").textContent = formatBR(coletivo, 4);
+      $("vExtra").textContent    = formatBR(extra, 4);
+      $("vCoef").textContent     = formatBR(coef, 2);
+      $("vSalario").textContent  = formatMoney(salario);
+      $("vMeses").textContent    = `${meses}/12`;
+      $("vPpr").textContent      = formatMoney(ppr);
+      $("pprBig").textContent    = formatMoney(ppr);
 
-      return ppr;
+      // baseLine com contexto (inclui ocorrências)
+      $("baseLine").textContent =
+        `Base: Salário Dez/25 • Meses • Coletivo (${formatBR(coletivo,2)}) + Extra (${formatBR(extra,2)}) • Coef. Faltas (${formatBR(coef,2)}) • Ocorrências (${occTotal})`;
+
+      // guarda para copiar
+      window.__ppr_value = ppr;
     }
 
-    // Buttons
-    document.getElementById("calcBtn").addEventListener("click", () => {
-      const salario = Number(document.getElementById("salario").value || 0);
-      if (salario <= 0){
-        toast("Informe seu Salário Dez/25 para calcular.");
-        document.getElementById("salario").focus();
-        return;
-      }
-      calc();
+    function resetAll(){
+      $("inpColetivo").value = "1,00";
+      $("inpSalario").value  = "";
+      $("inpMeses").value    = "12";
+      $("inpFaltas").value   = "0";
+
+      for(const k of Object.keys(occState)) occState[k]=0;
+      $("occSearch").value = "";
+      renderOccurrences("");
+
+      calcRealtime();
+      showToast("Resetado.");
+    }
+
+    // ---------- Eventos ----------
+    ["inpColetivo","inpSalario","inpMeses","inpFaltas"].forEach(id=>{
+      $(id).addEventListener("input", calcRealtime);
     });
 
-    document.getElementById("clearBtn").addEventListener("click", () => {
-      document.getElementById("resultadoColetivo").value = 1;
-      document.getElementById("salario").value = "";
-      document.getElementById("meses").value = 12;
-      document.getElementById("faltas").value = 0;
+    $("occSearch").addEventListener("input", (e)=>renderOccurrences(e.target.value));
 
-      for (const k in occState) occState[k] = 0;
-      buildOccurrences();
-
-      document.getElementById("boxColetivo").textContent = "1,0000";
-      document.getElementById("boxCoef").textContent = "1,00";
-      document.getElementById("boxSalario").textContent = "R$ 0,00";
-      document.getElementById("boxMeses").textContent = "12/12";
-      document.getElementById("boxPPR").textContent = "R$ 0,00";
-      document.getElementById("resultadoFinal").textContent = "R$ 0,00";
-      toast("Campos limpos.");
+    $("btnZerarOc").addEventListener("click", ()=>{
+      for(const k of Object.keys(occState)) occState[k]=0;
+      renderOccurrences($("occSearch").value);
+      calcRealtime();
+      showToast("Ocorrências zeradas.");
     });
 
-    document.getElementById("resetBtn").addEventListener("click", () => {
-      document.getElementById("clearBtn").click();
-    });
+    $("btnHome").addEventListener("click", ()=>location.href="index.html");
 
-    document.getElementById("copyBtn").addEventListener("click", async () => {
-      const txt = document.getElementById("resultadoFinal").textContent || "";
+    $("btnCopy").addEventListener("click", async ()=>{
+      const v = window.__ppr_value || 0;
+      const txt = formatMoney(v);
       try{
         await navigator.clipboard.writeText(txt);
-        toast("Valor copiado: " + txt);
+        showToast("Valor copiado.");
       }catch(e){
-        toast("Não foi possível copiar automaticamente.");
+        // fallback
+        const ta = document.createElement("textarea");
+        ta.value = txt;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        ta.remove();
+        showToast("Valor copiado.");
       }
     });
 
-    // Live preview updates (sem forçar cálculo)
-    ["resultadoColetivo","salario","meses","faltas"].forEach(id => {
-      document.getElementById(id).addEventListener("input", () => {
-        const coletivo = Number(document.getElementById("resultadoColetivo").value || 0);
-        const salario = Number(document.getElementById("salario").value || 0);
-        const meses = Math.min(12, Math.max(0, Number(document.getElementById("meses").value || 0)));
-        const faltas = Number(document.getElementById("faltas").value || 0);
+    $("btnReset").addEventListener("click", resetAll);
 
-        document.getElementById("boxColetivo").textContent = brDec(coletivo, 4);
-        document.getElementById("boxCoef").textContent = brDec2(coefByFaltas(faltas));
-        document.getElementById("boxSalario").textContent = brMoney(salario);
-        document.getElementById("boxMeses").textContent = `${Math.round(meses)}/12`;
-      });
-    });
-
-    // Init
-    buildOccurrences();
-    // preview initial
-    document.getElementById("boxExtra").textContent = brDec(extraByOcc(getTotalOcc()), 4);
+    // ---------- Init ----------
+    renderOccurrences("");
+    resetAll();
   </script>
 </body>
 </html>
