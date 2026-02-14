@@ -1,562 +1,344 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	
-	<title>Simulador PPR Individual</title>
-    
-	<style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-			min-height: 100vh;
-			overflow: auto;
-            background-color: #f1f1f1;
-            background-image: url('https://www.shutterstock.com/image-photo/cirebon-west-java-indonesia-november-600nw-2223702633.jpg'); /* Adicione o caminho da sua imagem */
-            background-size: cover; /* Ajusta a imagem para cobrir toda a área do fundo */
-			background-position: top center; /* Ajusta a posição da imagem para o topo central */
-			background-repeat: no-repeat;
-            color: #333;
-			zoom: 0.8;
-        }
-        .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        h1 {
-            font-size: 50px; /* Ajuste o tamanho da fonte conforme necessário */
-			font-weight: bold; /* Deixa o texto em negrito */
-			color: white;
-			text-align: center;
-			text-shadow: 2px 2px 4px rgba(0, 0, 0, 1.0); /* Sombra do texto */
-        /* color: #e60012; Cor vermelha Coca-Cola */
-		
-		}
-        h2 {
-            color: #fff;
-        }
-        .input-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            justify-content: center;
-        }
-		h4 {
-            color: #fff;
-        }
-        .input-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        .input-group {
-			display: flex;
-            background-color: #808080;
-            color: #fff;
-            border-radius: 9px;
-            padding: 15px;
-            width: 200px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-        }
-        label {
-            display: flex;
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: #fff;
-        }
-        input {
-            width: calc(100% - 5px);
-            padding: 9px;
-            margin-top: 0px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            color: #000;
-            font-weight: bold; /* Texto em negrito */
-        }
-        .calculation-box {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center; /* Isso mantém as caixas centralizadas dentro do contêiner */
-        }
-        .operator {
-            display: flex;
-            font-size: 18px;
-            font-weight: bold;
-            color: #fff;
-            align-items: center;
-			text-align: right;
-	
-        }
-		}
-        .operator2 {
-            display: flex;
-            font-size: 18px;
-            font-weight: bold;
-            color: #333;
-            align-items: center;
-			text-align: right;
-	
-        }
-		
-        .resultado-box {
-            background-color: #808080; /* Cinza */
-            color: #fff; /* Cor da fonte branca */
-            padding: 15px;
-            width: 69px;
-            height: 35px;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            font-size: 10px; /* Tamanho uniforme para o texto */
-            border-radius: 9px; /* Cantos arredondados */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-            font-weight: bold; /* Texto em negrito */
-        }
-        .resultado-box label {
-            margin-bottom: 8px;
-            font-weight: bold;
-			align-items: center;
-            justify-content: center;
-        }
-        .resultado-box span {
-            font-size: 16px; /* Tamanho do texto do resultado */
-        }
-        .hidden {
-            display: none;
-        }
-        .box {
-            padding: 15px;
-            width: 69px;
-            height: 35px;
-            text-align: center;
-            background: linear-gradient(to bottom, #e60012, #c8102e); /* Gradiente Coca-Cola FEMSA */
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            font-size: 10px; /* Tamanho uniforme para o texto */
-            border-radius: 9px; /* Cantos arredondados */
-            color: #fff; /* Cor da fonte branca */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-            font-weight: bold; /* Texto em negrito */
-        }
-        .box label {
-            margin-bottom: 8px;
-            font-weight: bold;
-			align-items: center;
-            justify-content: center;
-        }
-        .box span {
-            font-size: 16px; /* Tamanho do texto do resultado */
-			
-			}
-			.hidden {
-    display: none;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Simulador PPR Individual</title>
 
-        }
-        .PPR-box {
-            background-color: #4d4d4d; /* Cinza */
-            color: #fff; /* Cor da fonte branca */
-            padding: 10px;
-            width: 260px;
-            height: 80px;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            font-size: 16px; /* Tamanho uniforme para o texto */
-            border-radius: 9px; /* Cantos arredondados */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-            font-weight: bold; /* Texto em negrito */
-            position: relative; /* Permite o alinhamento preciso */
-            right: 0; /* Alinha à direita do contêiner pai */
-            top: 0; /* Alinha ao topo do contêiner pai */
-        }
-        .PPR-box label {
-            display: flex;
-            margin-bottom: 9px;
-            font-weight: bold;
-			text-align: center;
-			justify-content: center;
-        }
-        .PPR-box span {
-            font-size: 22px; /* Tamanho do texto do resultado */
-            text-align: center;
-        }
-			 
-	footer {
-      background-color: rgba(255, 255, 255, 0.8); /* Cor branca com 80% de transparência */
-      padding: 20px;
-      border-radius: 10px;
-      width: fit-content;
-      margin: 20px auto; /* Centraliza horizontalmente */
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Adiciona leve sombra */
+  <style>
+    :root{
+      --bg:#0f0f10;
+      --panel:#17181b;
+      --panel2:#1f2024;
+      --text:#f5f6f7;
+      --muted:#b8bcc6;
+      --red:#e60012;
+      --shadow: 0 10px 24px rgba(0,0,0,.35);
+      --radius: 16px;
     }
-    footer ul {
-      list-style-type: disc; /* Marcadores de lista */
-      margin: 0;
-      padding: 0;
-      padding-left: 20px; /* Espaçamento para os marcadores */
-    }
-    footer li {
-      margin-bottom: 10px; /* Espaço entre os itens */
+    body{
+      margin:0;
       font-family: Arial, sans-serif;
-      font-size: 14px;
-      color: #333; /* Texto em cor escura */
+      background: radial-gradient(1200px 700px at 20% 0%, rgba(230,0,18,.20), transparent 55%),
+                  radial-gradient(900px 600px at 100% 20%, rgba(230,0,18,.10), transparent 60%),
+                  var(--bg);
+      color:var(--text);
     }
-    </style>
+    .wrap{max-width:1100px;margin:0 auto;padding:24px;}
+    header{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:18px;}
+    .brand{display:flex;flex-direction:column;gap:6px;}
+    .brand h1{margin:0;font-size:18px;letter-spacing:.5px;}
+    .brand span{color:var(--muted);font-size:13px;}
+    .pill{background:rgba(230,0,18,.15);border:1px solid rgba(230,0,18,.35);padding:8px 12px;border-radius:999px;font-size:12px;color:var(--text);}
+
+    .hero{
+      background: linear-gradient(135deg, rgba(230,0,18,.22), rgba(255,255,255,.02));
+      border:1px solid rgba(255,255,255,.08);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding:18px;
+      margin-bottom:18px;
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:space-between;
+      align-items:center;
+      gap:14px;
+    }
+    .hero .label{color:var(--muted);font-size:12px;margin-bottom:6px;}
+    .hero .value{font-size:44px;font-weight:800;letter-spacing:.5px;}
+    .hero .meta{color:var(--muted);font-size:12px;line-height:1.4;}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;}
+    button{
+      cursor:pointer;border:none;border-radius:12px;padding:10px 12px;
+      background: var(--panel2); color: var(--text);
+      border:1px solid rgba(255,255,255,.10);
+    }
+    button.primary{
+      background: var(--red);
+      border-color: rgba(230,0,18,.7);
+      font-weight:700;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:14px;
+    }
+    @media (max-width:900px){ .grid{grid-template-columns:1fr;} .hero .value{font-size:38px;} }
+
+    .card{
+      background: rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius: var(--radius);
+      padding:16px;
+      box-shadow: var(--shadow);
+    }
+    .card h2{margin:0 0 12px 0;font-size:14px;color:var(--muted);letter-spacing:.4px;text-transform:uppercase;}
+    .fields{display:grid;grid-template-columns: 1fr 1fr;gap:12px;}
+    @media (max-width:520px){ .fields{grid-template-columns:1fr;} }
+
+    label{display:block;color:var(--muted);font-size:12px;margin-bottom:6px;}
+    input, select{
+      width:100%; box-sizing:border-box;
+      padding:12px 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.25);
+      color: var(--text);
+      font-weight:700;
+      outline:none;
+    }
+    .hint{margin-top:10px;color:var(--muted);font-size:12px;line-height:1.4;}
+    .error{
+      display:none;
+      margin-top:10px;
+      background: rgba(230,0,18,.15);
+      border:1px solid rgba(230,0,18,.35);
+      padding:10px 12px;
+      border-radius:12px;
+      color:var(--text);
+      font-size:12px;
+    }
+
+    details{margin-top:12px;}
+    details summary{cursor:pointer;color:var(--text);font-weight:700;}
+    .memory{margin-top:12px;color:var(--muted);font-size:12px;line-height:1.45;}
+    .row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+    .box{
+      min-width:140px;
+      background: rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:14px;
+      padding:10px;
+      color:var(--text);
+    }
+    .box b{display:block;font-size:11px;color:var(--muted);margin-bottom:6px;}
+    footer{margin-top:18px;color:var(--muted);font-size:12px;line-height:1.5;}
+  </style>
 </head>
+
 <body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <h1>Simulador PPR</h1>
+        <span>Calculadora • Atualiza em tempo real</span>
+      </div>
+      <div class="pill">Coca-Cola FEMSA • Uso interno</div>
+    </header>
 
-<div class="container">
-    <h1>SIMULADOR PPR INDIVIDUAL 2024</h1>
+    <!-- HERO: valor principal -->
+    <section class="hero" aria-label="Resultado principal">
+      <div>
+        <div class="label">Seu PPR estimado</div>
+        <div class="value" id="ppr_total">R$ 0</div>
+        <div class="meta" id="hero_meta">
+          Base: Salário Dez/24 • Meses • Nota • Fator
+        </div>
+      </div>
 
-<!-- Etapa 1: Entrada de dados -->
-	  
-    <h2>Dados para Simulação</h2>
-	
-	<div class="input-container" style="display: none">
-    <div class="input-group">
-    <label for="categoria">Regra de Pesos: </label>
-    <select id="categoria">
-        <option value="Regra_1">Normal      </option>
-        <option value="Regra_2">Gerência 8+ </option>
-    </select>
-	
-	</div>
-	<div class="input-group">
-    <label for="InputTarget">Target (Salários): </label>
-    <input type="number" step="0.1" id="InputTarget" value="1">
+      <div class="actions">
+        <button class="primary" id="btnCopy">Copiar valor</button>
+        <button id="btnReset">Resetar</button>
+      </div>
+    </section>
 
-	</div>
-	</div>
-    <div class="input-container">
-		<div class="input-group">
-            <label for="salario">Salário (Dez/24): </label>
-            <input type="text" id="salario"class="currency-input" >
+    <div class="grid">
+      <!-- ENTRADAS -->
+      <section class="card">
+        <h2>Dados para simulação</h2>
+
+        <div class="fields">
+          <div>
+            <label for="salario">Salário (Dez/24)</label>
+            <input type="text" id="salario" placeholder="Ex.: 3.333" />
+          </div>
+
+          <div>
+            <label for="meses_trabalhados">Meses trabalhados</label>
+            <input type="number" id="meses_trabalhados" min="0" max="12" step="1" value="" />
+          </div>
+
+          <div>
+            <label for="nota_desempenho">Nota de desempenho</label>
+            <input type="number" id="nota_desempenho" min="0" max="5" step="1" value="" />
+          </div>
+
+          <div>
+            <label for="fator_desempenho">Fator de desempenho</label>
+            <input type="number" id="fator_desempenho" step="0.001" min="0" max="1.5" value="0" />
+          </div>
         </div>
-        <div class="input-group">
-            <label for="meses_trabalhados">Meses Trabalhados: </label>
-            <input type="number" id="meses_trabalhados"  min="0" max="12" step="1" value="" required>
+
+        <div class="hint">
+          Intervalo por nota: 1=[0,000–0,624] 2=[0,625–0,899] 3=[0,900–1,134] 4=[1,135–1,383] 5=[1,384–1,500]
         </div>
-        <div class="input-group">
-            <label for="nota_desempenho">*Nota de Desempenho: </label>
-            <input type="number" id="nota_desempenho"  min="0" max="5" step="1" value="" required>
+
+        <div id="erro_fator" class="error">
+          Preencher o fator de desempenho dentro do intervalo da nota.
         </div>
-        <div class="input-group">
-            <label for="fator_desempenho">*Fator de Desempenho: </label>
-            <input type="number" step="0.001" id="fator_desempenho"  min="0" max="1.5" value="0" required>
-        </div>
+      </section>
+
+      <!-- MEMÓRIA -->
+      <section class="card">
+        <h2>Transparência do cálculo</h2>
+
+        <details>
+          <summary>Ver memória de cálculo</summary>
+
+          <!-- Mantive os IDs para você continuar exibindo exatamente como já fazia -->
+          <div class="memory">
+            <div class="row">
+              <div class="box"><b>Indicador Negócio</b><span id="nota_indicador_negocio">0</span></div>
+              <div class="box"><b>Peso Negócio</b><span id="peso_indicador_negocio">0.30</span></div>
+              <div class="box"><b>Resultado Negócio</b><span id="resultado_negocio">0</span></div>
+            </div>
+
+            <div class="row">
+              <div class="box"><b>Fator Desempenho</b><span id="fator_desempenho_individual">0</span></div>
+              <div class="box"><b>Peso Individual</b><span id="peso_indicador_individual">0.70</span></div>
+              <div class="box"><b>Resultado Individual</b><span id="resultado_individual">0</span></div>
+            </div>
+
+            <div class="row">
+              <div class="box"><b>Target</b><span id="target_individual">1.00</span></div>
+              <div class="box"><b>Salário</b><span id="salario_individual">0</span></div>
+              <div class="box"><b>Meses/12</b><span id="proporcao_mes_individual">0</span></div>
+            </div>
+          </div>
+        </details>
+
+        <footer>
+          <b>Considerações:</b><br/>
+          Simulação — valores podem variar por IR e regras sindicais. Use salário de Dezembro como base.
+        </footer>
+      </section>
     </div>
-	<h4>Intervalo de Fatores por Nota: 1 = [0,000 a 0,624] 2 = [0,625 a 0,899] 3 = [0,900 a 1,134] 4 = [1,135 a 1,383] 5 = [1,384 a 1,500]</h4>
-	
-	<div id="erro_fator" style="color: red; background: white; display: none;">Preencher o fator de desempenho! Por gentileza utilize o intervalo acima..</div>
-	
- <!-- Etapa 2: Cálculo Automático -->
-    <h2>Memória de Cálculo Detalhada</h2>
-    		<div class="operator">Resultado do Negócio</div>
-    <div class="calculation-box">
-	
-        <!-- Resultados do Negócio -->
-        <div class="box">
-            <label>Indicador Negócio:</label>
-            <span id="nota_indicador_negocio">0</span>
-        </div>
-        <div class="operator">X</div>
-        <div class="box">
-            <label>Peso Indicador:</label>
-            <span id="peso_indicador_negocio">0.3</span>
-        </div>
-        <div class="operator">=</div>
-        <div class="resultado-box">
-            <label>Resultado</label>
-            <span id="indicador_negocio">0</span>
-        </div>
-        <div class="operator">X</div>
-        <div class="box">
-            <label>Target (Salários): </label>
-            <span id="target_negocio">1</span>
-        </div>
-        <div class="operator">X</div>
-        <div class="box">
-            <label>Salário: </label>
-            <span id="salario_negocio">0</span>
-        </div>
-        <div class="operator">X</div>
-        <div class="box">
-            <label>Meses Trabalhados (div. por 12): </label>
-            <span id="meses_negocio">0</span>
-        </div>
-        <div class="box hidden">
-            <label>Meses Proporcionais: </label>
-            <span id="proporcao_mes_negocio">0</span>
-        </div>
-        <div class="operator">=</div>
-        <div class="resultado-box">
-            <label>Resultado Negócio: </label>
-            <span id="resultado_negocio">0</span>
-        </div>
-    </div>
+  </div>
 
-<div class="operator"> Resultado Individual</div>
-    <div class="calculation-box">
-	
-<!-- Resultados Individuais -->
-        <div class="box">
-            <label>Fator Desempenho:</label>
-            <span id="fator_desempenho_individual">0</span>
-        </div>
-        <div class="operator">X</div>
-        <div class="box">
-            <label>Peso Indicador:</label>
-            <span id="peso_indicador_individual">0.7</span>
-        </div>
-        <div class="operator">=</div>
-        <div class="resultado-box">
-            <label>Resultado: </label>
-            <span id="nota_peso_individual">0</span>
-        </div>
-        <div class="operator">X</div>
-        <div class="box">
-            <label>Target (Salários): </label>
-            <span id="target_individual">1</span>
-        </div>
-        <div class="operator">X</div>
-        <div class="box">
-            <label>Salário:</label>
-            <span id="salario_individual">0</span>
-        </div>
-        <div class="operator">X</div>
-        <div class="box">
-            <label>Meses Trabalhados (div. por 12): </label>
-            <span id="meses_individual">0</span>
-        </div>
-        <div class="box hidden">
-            <label>Meses Proporcionais: </label>
-            <span id="proporcao_mes_individual">0</span>
-        </div>
-        <div class="operator">=</div>
-        <div class="resultado-box">    
-            <label>Resultado Individual: </label>
-            <span id="resultado_individual">0</span>
-        </div>
-    </div>
-
-    <!-- Soma dos Resultados -->
-    <div class="PPR-box">
-        <label>Resultado Final</label>
-        <span id="ppr_total">0</span>
-    </div>
-</div>
-
-<script>
-    // Função para calcular os valores
+  <script>
+    // ======= Fórmulas COPIADAS do seu código (Individual) =======
     function calcular() {
-        // Pegar valores inseridos e ajustar para formato correto
-        const salario = parseFloat(document.getElementById('salario').value
-            .replace(/\./g, '')  // Remove todos os pontos (milhares)
-            .replace(',', '.')   // Substitui a vírgula por ponto (decimal)
-            .replace('R$', '')    // Remove o símbolo de R$
-            .trim());
+      const salario = parseFloat(document.getElementById('salario').value
+        .replace(/\./g, '')
+        .replace(',', '.')
+        .replace('R$', '')
+        .trim());
 
-        const mesesTrabalhados = parseInt(document.getElementById('meses_trabalhados').value, 10);
-        const notaDesempenho = parseFloat(document.getElementById('nota_desempenho').value);
-        const fatorDesempenho = parseFloat(document.getElementById('fator_desempenho').value);
+      const mesesTrabalhados = parseInt(document.getElementById('meses_trabalhados').value, 10);
+      const notaDesempenho = parseFloat(document.getElementById('nota_desempenho').value);
+      const fatorDesempenho = parseFloat(document.getElementById('fator_desempenho').value);
 
-        // Pegar a regra de pesos
-        const categoria = document.getElementById('categoria').value;
+      // no seu individual, categoria/target ficam ocultos; mantive default conforme seu HTML
+      const categoria = "Regra_1";
+      let pesoNegocio, pesoDesempenho;
+      if (categoria === "Regra_2") { pesoNegocio = 0.5; pesoDesempenho = 0.5; }
+      else { pesoNegocio = 0.3; pesoDesempenho = 0.7; }
 
-        // Definir pesos com base na regra selecionada
-        let pesoNegocio, pesoDesempenho;
-        if (categoria === "Regra_2") {
-            pesoNegocio = 0.5; // Peso para o indicador de negócio (Gerência 8+)
-            pesoDesempenho = 0.5; // Peso para o indicador de desempenho (Gerência 8+)
-        } else {
-            pesoNegocio = 0.3; // Peso fixo do indicador de negócio (Normal)
-            pesoDesempenho = 0.7; // Peso fixo do indicador de desempenho (Normal)
-        }
+      if (isNaN(salario) || isNaN(mesesTrabalhados) || isNaN(notaDesempenho) || isNaN(fatorDesempenho)) {
+        document.getElementById('ppr_total').textContent = "R$ 0";
+        return;
+      }
 
-        // Verificar se algum valor é inválido
-        if (isNaN(salario) || isNaN(mesesTrabalhados) || isNaN(notaDesempenho) || isNaN(fatorDesempenho)) {
-            document.getElementById('ppr_total').textContent = "-";
-            return; // Se algum valor for inválido, sair da função
-        }
+      const targetNegocio = 1.0;
+      const targetIndividual = 1.0;
 
-        // Pegar o valor de 'targetNegocio' e 'target_individual' (assumindo que esses são os campos corretos)
-        const targetNegocio = parseFloat(document.getElementById('InputTarget').value);
-        const targetIndividual = parseFloat(document.getElementById('InputTarget').value);
+      const notaIndicadorNegocio = (notaDesempenho === 0) ? 0 : 1.6261; // igual seu código
+      const indicadorNegocio = notaIndicadorNegocio * pesoNegocio;
+      const proporcaoMesesNegocio = mesesTrabalhados / 12;
+      const resultadoNegocio = indicadorNegocio * targetNegocio * salario * proporcaoMesesNegocio;
 
-        // Cálculo do Resultado do Negócio
-        const notaIndicadorNegocio = (notaDesempenho === 0) ? 0 : 1.6261; //alterar aqui o resultado do negócio
-        const indicadorNegocio = notaIndicadorNegocio * pesoNegocio;
-        const proporcaoMesesNegocio = mesesTrabalhados / 12;
-        const resultadoNegocio = indicadorNegocio * targetNegocio * salario * proporcaoMesesNegocio;
+      const notaPesoIndividual = fatorDesempenho * pesoDesempenho;
+      const resultadoIndividual = notaPesoIndividual * targetIndividual * salario * proporcaoMesesNegocio;
 
-        // Cálculo do Resultado Individual
-        const notaPesoIndividual = fatorDesempenho * pesoDesempenho;
-        const resultadoIndividual = notaPesoIndividual * targetIndividual * salario * proporcaoMesesNegocio;
+      // ======= Fórmula do TOTAL (copiada do seu individual) =======
+      const baseCalculo = resultadoNegocio + resultadoIndividual;
+      const calculo = baseCalculo * 0.60;
+      let totalPPR;
 
-		// Cálculo do Total PPR
-		const baseCalculo = resultadoNegocio + resultadoIndividual;
-		const calculo = baseCalculo * 0.60;
-		let totalPPR;
-		
-		switch (notaDesempenho) {
-			case 0:  totalPPR = "-"; 								break;
-			case 1:  totalPPR = calculo <= 1059 ? 1059 : calculo; 	break;
-			case 2:  totalPPR = baseCalculo * 0.75; 				break;
-			default: totalPPR = baseCalculo * 1.00; 				break;
-		}
-		
-		// Verifica e formata o resultado
-		if (typeof totalPPR === "number" && !isNaN(totalPPR)) {
-			totalPPR = totalPPR.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL',  minimumFractionDigits: 0,maximumFractionDigits: 0  });
-		} else {
-			totalPPR = "-"; // Para casos inelegíveis
-		}
+      switch (notaDesempenho) {
+        case 0:  totalPPR = "-"; break;
+        case 1:  totalPPR = calculo <= 1059 ? 1059 : calculo; break;
+        case 2:  totalPPR = baseCalculo * 0.75; break;
+        default: totalPPR = baseCalculo * 1.00; break;
+      }
 
-        // Exibe o valor calculado no campo do total PPR
-        document.getElementById('ppr_total').textContent = totalPPR;
+      if (typeof totalPPR === "number" && !isNaN(totalPPR)) {
+        totalPPR = totalPPR.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0, maximumFractionDigits: 0 });
+      } else {
+        totalPPR = "-";
+      }
 
-        // Atualizar valores na memória de cálculo
-        document.getElementById('nota_indicador_negocio').innerText = isNaN(notaIndicadorNegocio) ? "-" : notaIndicadorNegocio.toFixed(4);
-        document.getElementById('peso_indicador_negocio').innerText = isNaN(pesoNegocio) ? "-" : pesoNegocio.toFixed(2);
-        document.getElementById('indicador_negocio').innerText = isNaN(indicadorNegocio) ? "-" : indicadorNegocio.toFixed(2);
-        document.getElementById('target_negocio').innerText = isNaN(targetNegocio) ? "-" : targetNegocio.toFixed(2);
-        document.getElementById('salario_negocio').innerText = isNaN(salario) ? "-" : salario.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0, maximumFractionDigits: 0 });
+      document.getElementById('ppr_total').textContent = totalPPR;
 
-        document.getElementById('meses_negocio').innerText = isNaN(mesesTrabalhados) ? "-" : mesesTrabalhados;
-        document.getElementById('proporcao_mes_negocio').innerText = isNaN(proporcaoMesesNegocio) ? "-" : proporcaoMesesNegocio.toFixed(2);
-        document.getElementById('resultado_negocio').innerText = isNaN(resultadoNegocio) ? "-" : resultadoNegocio.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0, maximumFractionDigits: 0 });
+      // Atualiza meta do topo
+      document.getElementById('hero_meta').textContent =
+        `Base: Salário Dez/24 • Meses (${mesesTrabalhados}/12) • Nota ${notaDesempenho} • Fator ${fatorDesempenho}`;
 
-        document.getElementById('fator_desempenho_individual').innerText = isNaN(fatorDesempenho) ? "-" : fatorDesempenho.toFixed(3);
-        document.getElementById('peso_indicador_individual').innerText = isNaN(pesoDesempenho) ? "-" : pesoDesempenho.toFixed(2);
-        document.getElementById('nota_peso_individual').innerText = isNaN(notaPesoIndividual) ? "-" : notaPesoIndividual.toFixed(2);
-        document.getElementById('target_individual').innerText = isNaN(targetIndividual) ? "-" : targetIndividual.toFixed(2);
-        document.getElementById('salario_individual').innerText = isNaN(salario) ? "-" : salario.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0, maximumFractionDigits: 0 });
-        document.getElementById('meses_individual').innerText = isNaN(mesesTrabalhados) ? "-" : mesesTrabalhados;
-        document.getElementById('proporcao_mes_individual').innerText = isNaN(proporcaoMesesNegocio) ? "-" : proporcaoMesesNegocio.toFixed(2);
-        document.getElementById('resultado_individual').innerText = isNaN(resultadoIndividual) ? "-" : resultadoIndividual.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0, maximumFractionDigits: 0 });
+      // ======= Mantive os campos de memória (IDs) =======
+      document.getElementById('nota_indicador_negocio').innerText = isNaN(notaIndicadorNegocio) ? "-" : notaIndicadorNegocio.toFixed(4);
+      document.getElementById('peso_indicador_negocio').innerText = isNaN(pesoNegocio) ? "-" : pesoNegocio.toFixed(2);
+      document.getElementById('resultado_negocio').innerText = isNaN(resultadoNegocio) ? "-" :
+        resultadoNegocio.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0, maximumFractionDigits: 0 });
+
+      document.getElementById('fator_desempenho_individual').innerText = isNaN(fatorDesempenho) ? "-" : fatorDesempenho.toFixed(3);
+      document.getElementById('peso_indicador_individual').innerText = isNaN(pesoDesempenho) ? "-" : pesoDesempenho.toFixed(2);
+      document.getElementById('resultado_individual').innerText = isNaN(resultadoIndividual) ? "-" :
+        resultadoIndividual.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0, maximumFractionDigits: 0 });
+
+      document.getElementById('target_individual').innerText = "1.00";
+      document.getElementById('salario_individual').innerText = isNaN(salario) ? "-" :
+        salario.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0, maximumFractionDigits: 0 });
+
+      document.getElementById('proporcao_mes_individual').innerText = isNaN(proporcaoMesesNegocio) ? "-" : proporcaoMesesNegocio.toFixed(2);
     }
 
-    // Função para atualizar os limites do fator de desempenho com base na nota de desempenho
+    // ======= Validação do fator (copiada do seu código) =======
     function atualizarLimitesFator() {
-        const notaDesempenho = parseFloat(document.getElementById('nota_desempenho').value);
-        const inputFator = document.getElementById('fator_desempenho');
-        const erroFator = document.getElementById('erro_fator');
+      const notaDesempenho = parseFloat(document.getElementById('nota_desempenho').value);
+      const inputFator = document.getElementById('fator_desempenho');
+      const erroFator = document.getElementById('erro_fator');
 
-        // Definir os limites de min e max com base na nota
-        let min, max;
+      let min, max;
+      switch (notaDesempenho) {
+        case 0: min = 0.000; max = 0.000; break;
+        case 1: min = 0.000; max = 0.624; break;
+        case 2: min = 0.625; max = 0.899; break;
+        case 3: min = 0.900; max = 1.134; break;
+        case 4: min = 1.135; max = 1.383; break;
+        case 5: min = 1.384; max = 1.500; break;
+        default: min = 0; max = 1.5;
+      }
+      inputFator.min = min; inputFator.max = max;
 
-        switch (notaDesempenho) {
-            case 0:
-                min = 0.000;
-                max = 0.000;
-                break;
-            case 1:
-                min = 0.000;
-                max = 0.624;
-                break;
-            case 2:
-                min = 0.625;
-                max = 0.899;
-                break;
-            case 3:
-                min = 0.900;
-                max = 1.134;
-                break;
-            case 4:
-                min = 1.135;
-                max = 1.383;
-                break;
-            case 5:
-                min = 1.384;
-                max = 1.500;
-                break;
-            default:
-                min = 0;
-                max = 1.5;
-        }
-
-        inputFator.min = min;
-        inputFator.max = max;
-
-        // Validar o valor atual do inputFator
-        validarInput(inputFator, min, max, erroFator);
+      const value = parseFloat(inputFator.value);
+      if (value < min || value > max || isNaN(value)) erroFator.style.display = 'block';
+      else erroFator.style.display = 'none';
     }
 
-    // Função genérica para validar valores dentro dos limites
-    function validarInput(input, min, max, erroElemento) {
-        const value = parseFloat(input.value);
-
-        if (value < min || value > max || isNaN(value)) {
-            erroElemento.style.display = 'block'; // Exibe o erro se o valor estiver fora do intervalo
-        } else {
-            erroElemento.style.display = 'none'; // Oculta o erro se o valor for válido
-        }
+    function atualizarValores(){
+      atualizarLimitesFator();
+      calcular();
     }
 
-    // Função para restringir os valores dos inputs dentro de seus limites
-    function restringirValores() {
-        // Definir os limites dos inputs, exceto para salário e target
-        const inputs = [
-            { id: 'nota_desempenho', min: 0, max: 5 },
-            { id: 'fator_desempenho', min: 0, max: 1.5 },
-            { id: 'meses_trabalhados', min: 0, max: 12 },
-        ];
+    // Botões utilitários
+    document.getElementById('btnCopy').addEventListener('click', async () => {
+      const v = document.getElementById('ppr_total').textContent;
+      try { await navigator.clipboard.writeText(v); } catch(e) {}
+    });
+    document.getElementById('btnReset').addEventListener('click', () => {
+      document.getElementById('salario').value = "";
+      document.getElementById('meses_trabalhados').value = "";
+      document.getElementById('nota_desempenho').value = "";
+      document.getElementById('fator_desempenho').value = "0";
+      atualizarValores();
+    });
 
-        inputs.forEach(({ id, min, max }) => {
-            const input = document.getElementById(id);
-            if (input) {
-                input.min = min;
-                input.max = max;
-                if (input.value < min) input.value = min;
-                if (input.value > max) input.value = max;
-            }
-        });
-    }
+    // Eventos (mesma ideia do seu código)
+    ['salario','meses_trabalhados','nota_desempenho','fator_desempenho']
+      .forEach(id => document.getElementById(id).addEventListener('input', atualizarValores));
 
-    // Função para atualizar os valores sempre que houver alteração em qualquer input
-    function atualizarValores() {
-        restringirValores();  // Restringir valores de input
-        atualizarLimitesFator(); // Atualizar limites do fator de desempenho
-        calcular();  // Recalcular o PPR
-    }
-
-    // Adicionar eventos de input para todos os campos
-    document.getElementById('salario').addEventListener('input', atualizarValores);
-    document.getElementById('meses_trabalhados').addEventListener('input', atualizarValores);
-    document.getElementById('nota_desempenho').addEventListener('input', atualizarValores);
-    document.getElementById('fator_desempenho').addEventListener('input', atualizarValores);
-    document.getElementById('InputTarget').addEventListener('input', atualizarValores);
-
-    // Inicializa as restrições e cálculos ao carregar a página
     window.onload = atualizarValores;
-</script>
-
+  </script>
 </body>
 </html>
-
-<footer>
-  <ul>
-	<h3>Considerações:</h3>	
-	<li>*A Nota e Fator de Desempenho só serão disponibilizados após o gestor imediato encaminhar o formulário de avaliação calibrado para a assinatura do colaborador. Somente após o encerramento do ciclo, o colaborador poderá visualizar a nota no formulário de talentos;</li>
-	<h3></h3>	
-	<li>Os valores apresentados neste simulador estão com as casas decimais arredondadas;</li>	
-    <li>Haverá desconto de Imposto de Renda (IR), conforme a tabela vigente do ano em questão;</li>
-    <li>Poderá haver desconto de contribuição assistencial, conforme o acordo Sindical, pelo ao qual está alocado;</li>
-	<li>Caso o colaborador tenha alterações no cargo ou salário ao longo do ano, será necessário realizar a simulação de forma proporcional, considerando o nível de posição. Para ambos os cálculos, considerar o salário de Dezembro;</li>
-    </ul>
-</footer>
