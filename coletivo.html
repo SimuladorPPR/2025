@@ -3,28 +3,28 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Simulador PPR Coletivo</title>
+  <title>Simulador PPR 2025 • Coletivo</title>
 
   <style>
     :root{
       --bg:#0f0f10;
       --panel:#141417;
       --panel2:#101114;
-      --stroke:rgba(255,255,255,.08);
-      --stroke2:rgba(255,255,255,.12);
       --text:#f5f6f7;
       --muted:#b8bcc6;
+      --stroke:rgba(255,255,255,.08);
+      --stroke2:rgba(255,255,255,.12);
       --red:#e60012;
 
-      --wine1: rgba(125, 0, 18, .55);
-      --wine2: rgba(125, 0, 18, .18);
+      --wine1: rgba(125,0,18,.55);
+      --wine2: rgba(125,0,18,.16);
 
       --radius:18px;
       --shadow: 0 14px 34px rgba(0,0,0,.42);
       --shadow2: 0 10px 24px rgba(0,0,0,.35);
     }
 
-    *{box-sizing:border-box}
+    *{ box-sizing:border-box; }
     body{
       margin:0;
       font-family: Arial, sans-serif;
@@ -35,18 +35,11 @@
         var(--bg);
     }
 
-    .wrap{
-      max-width:1200px;
-      margin:0 auto;
-      padding:22px 18px 34px;
-    }
+    .wrap{ max-width:1120px; margin:0 auto; padding:22px 18px 34px; }
 
-    /* Header (padrão sóbrio) */
+    /* Header padrão (sóbrio) */
     .topbar{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:14px;
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
       padding:14px 16px;
       border:1px solid var(--stroke);
       border-radius:22px;
@@ -54,21 +47,28 @@
       box-shadow: var(--shadow2);
       backdrop-filter: blur(10px);
     }
-    .brand{
-      display:flex;
-      flex-direction:column;
-      gap:2px;
-      min-width: 220px;
+    .brand{ display:flex; flex-direction:column; gap:2px; min-width: 220px; }
+    .brand .t1{ font-size:16px; font-weight:800; letter-spacing:.2px; }
+    .brand .t2{ font-size:12px; color:var(--muted); }
+    .actions{ display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
+    .btn{
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.04);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:14px;
+      cursor:pointer;
+      font-weight:800;
+      font-size:13px;
+      transition:.2s;
+      user-select:none;
     }
-    .brand .t1{
-      font-size:16px;
-      font-weight:700;
-      letter-spacing:.2px;
+    .btn:hover{ transform: translateY(-1px); border-color: rgba(230,0,18,.55); }
+    .btn.primary{
+      background:var(--red);
+      border-color:transparent;
     }
-    .brand .t2{
-      font-size:12px;
-      color:var(--muted);
-    }
+    .btn.primary:hover{ filter:brightness(1.05); }
     .badge{
       margin-left:auto;
       padding:8px 12px;
@@ -80,124 +80,65 @@
       white-space:nowrap;
     }
 
-    .actions{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      flex-wrap:wrap;
-      justify-content:flex-end;
-    }
-    .btn{
-      border:1px solid var(--stroke);
-      background:rgba(255,255,255,.04);
-      color:var(--text);
-      padding:10px 12px;
-      border-radius:14px;
-      cursor:pointer;
-      font-weight:700;
-      font-size:13px;
-      transition:.2s;
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      user-select:none;
-    }
-    .btn:hover{ transform: translateY(-1px); border-color: rgba(230,0,18,.55); }
-    .btn.primary{
-      background:var(--red);
-      border-color:transparent;
-    }
-    .btn.primary:hover{ filter:brightness(1.05); }
-
-    /* Layout */
-    .grid{
-      margin-top:16px;
-      display:grid;
-      grid-template-columns: 1.05fr .95fr;
-      gap:16px;
-    }
-    @media (max-width: 980px){
-      .grid{ grid-template-columns: 1fr; }
-    }
-
+    /* Cards */
     .card{
+      margin-top:16px;
       border:1px solid var(--stroke);
-      border-radius: var(--radius);
+      border-radius:var(--radius);
       background: rgba(255,255,255,.03);
       box-shadow: var(--shadow);
       overflow:hidden;
     }
 
-    /* Header interno (degradê vinho) */
-    .cardHead{
-      padding:16px 16px 14px;
+    /* Card do resultado (igual vibe do Individual) */
+    .resultHead{
+      padding:16px 16px 10px;
       background:
         radial-gradient(900px 260px at 10% 0%, var(--wine1), transparent 60%),
         linear-gradient(90deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
       border-bottom:1px solid var(--stroke);
     }
-    .cardHeadRow{
+    .resultRow{
+      display:flex; align-items:flex-end; justify-content:space-between; gap:14px; flex-wrap:wrap;
+    }
+    .resultTitle{ margin:0; font-size:18px; font-weight:900; }
+    .resultSub{ margin-top:6px; color:var(--muted); font-size:12px; line-height:1.35; }
+
+    .pprBox{
+      padding:16px;
       display:flex;
+      gap:14px;
       align-items:flex-end;
       justify-content:space-between;
-      gap:10px;
-    }
-    .hTitle{
-      font-size:18px;
-      font-weight:800;
-      margin:0;
-    }
-    .hSub{
-      margin-top:6px;
-      color:var(--muted);
-      font-size:12px;
-      line-height:1.35;
-    }
-
-    .valueBox{
-      padding:14px 16px 18px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:14px;
       flex-wrap:wrap;
     }
-    .bigValue{
-      display:flex;
-      flex-direction:column;
-      gap:6px;
-      min-width: 240px;
-    }
-    .bigValue .label{
-      color:var(--muted);
-      font-size:12px;
-    }
-    .bigValue .money{
-      font-size:44px;
+    .pprLeft{ min-width: 280px; }
+    .pprLabel{ color:var(--muted); font-size:12px; margin-bottom:6px; }
+    .pprValue{
+      font-size:46px;
       font-weight:900;
       letter-spacing:.4px;
       line-height:1;
     }
-    .bigValue .baseLine{
+    .pprBase{
+      margin-top:8px;
       color:var(--muted);
       font-size:12px;
+      line-height:1.35;
+      max-width: 760px;
     }
 
+    /* Inputs (limpos) */
     .form{
-      padding:0 16px 16px;
+      padding: 0 16px 16px;
     }
-
     .fields{
       display:grid;
       grid-template-columns: repeat(4, 1fr);
       gap:12px;
     }
-    @media (max-width: 980px){
-      .fields{ grid-template-columns: repeat(2, 1fr); }
-    }
-    @media (max-width: 520px){
-      .fields{ grid-template-columns: 1fr; }
-    }
+    @media (max-width: 980px){ .fields{ grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 520px){ .fields{ grid-template-columns: 1fr; } }
 
     .field{
       padding:12px;
@@ -205,21 +146,17 @@
       border:1px solid var(--stroke);
       background: rgba(0,0,0,.22);
     }
-    .fieldTop{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      margin-bottom:10px;
-    }
-    .fieldTop .name{
-      font-weight:800;
-      font-size:13px;
-    }
-    .fieldTop .hint{
+    .field label{
+      display:block;
       font-size:12px;
+      font-weight:900;
+      margin-bottom:8px;
+    }
+    .hint{
+      display:block;
       color:var(--muted);
-      white-space:nowrap;
+      font-size:12px;
+      margin-top:6px;
     }
     input[type="text"], input[type="number"]{
       width:100%;
@@ -236,126 +173,123 @@
       box-shadow: 0 0 0 3px rgba(230,0,18,.12);
     }
 
-    /* Blocos de fórmula */
-    .formula{
-      padding: 0 16px 18px;
-      display:flex;
-      flex-direction:column;
-      gap:12px;
-    }
-    .rowFormula{
-      display:flex;
-      flex-wrap:wrap;
-      align-items:center;
-      gap:10px;
-    }
-    .chip{
-      min-width: 170px;
-      flex: 1 1 170px;
-      padding:14px 14px;
-      border-radius:18px;
+    /* “Memória de cálculo” (discreta) */
+    .memory{
+      margin-top:12px;
+      padding:12px 14px;
+      border-radius:16px;
       border:1px solid rgba(255,255,255,.06);
-      background: rgba(0,0,0,.25);
-      text-align:center;
+      background: rgba(0,0,0,.18);
+      color: var(--muted);
+      font-size:12px;
+      line-height:1.4;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:space-between;
+      align-items:center;
     }
-    .chip.red{
-      background: rgba(230,0,18,.85);
-      border-color: rgba(230,0,18,.35);
-    }
-    .chip .c1{
-      font-weight:900;
-      font-size:16px;
-      margin-bottom:6px;
-    }
-    .chip .c2{
-      font-weight:900;
-      font-size:28px;
-      letter-spacing:.4px;
-    }
-    .op{
-      font-size:22px;
-      font-weight:900;
-      opacity:.75;
-      padding: 0 4px;
+    .pill{
+      border:1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.03);
+      color: var(--text);
+      padding:6px 10px;
+      border-radius:999px;
+      font-weight:800;
+      font-size:12px;
+      white-space:nowrap;
     }
 
-    /* Painel direito */
-    .sideBody{
-      padding:16px;
+    /* Ocorrências (recolhível e “limpo”) */
+    details{
+      border-top:1px solid var(--stroke);
+      background: rgba(0,0,0,.12);
+    }
+    summary{
+      list-style:none;
+      cursor:pointer;
+      padding:14px 16px;
       display:flex;
-      flex-direction:column;
-      gap:14px;
-    }
-    .tableCard{
-      border:1px solid var(--stroke);
-      border-radius:18px;
-      background: rgba(0,0,0,.22);
-      overflow:hidden;
-    }
-    .tableHead{
-      padding:14px 14px;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      user-select:none;
       font-weight:900;
-      font-size:14px;
-      border-bottom:1px solid var(--stroke);
-      background:
-        radial-gradient(900px 220px at 10% 0%, var(--wine2), transparent 62%),
-        rgba(255,255,255,.02);
     }
-    table{
-      width:100%;
-      border-collapse:collapse;
+    summary::-webkit-details-marker{ display:none; }
+    .sumLeft{
+      display:flex; flex-direction:column; gap:4px;
     }
+    .sumSub{ color:var(--muted); font-weight:400; font-size:12px; }
+
+    .occBody{
+      padding: 0 16px 16px;
+    }
+    .occTools{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+      padding-top:10px;
+    }
+    .occTools input{
+      flex: 1 1 260px;
+      min-width: 240px;
+    }
+
+    .table{
+      margin-top:12px;
+      border:1px solid var(--stroke);
+      border-radius:16px;
+      overflow:hidden;
+      background: rgba(0,0,0,.18);
+    }
+    table{ width:100%; border-collapse:collapse; }
     th, td{
       padding:11px 12px;
       border-bottom:1px solid rgba(255,255,255,.06);
       text-align:left;
       font-size:13px;
     }
-    th{ color:var(--muted); font-weight:800; }
+    th{ color:var(--muted); font-weight:900; background: rgba(255,255,255,.02); }
     tr:last-child td{ border-bottom:none; }
-
-    /* Ocorrências */
-    .occTools{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
-      padding:12px 12px;
-      border-bottom:1px solid rgba(255,255,255,.06);
-      background: rgba(255,255,255,.02);
-    }
-    .occTools input{
-      flex: 1 1 220px;
-      min-width: 220px;
-    }
-    .miniNote{
-      color:var(--muted);
-      font-size:12px;
-      padding: 0 12px 12px;
-      line-height:1.35;
-    }
-    .qty{
-      width:92px;
+    .code{ width:90px; color:var(--muted); font-weight:900; }
+    .qtyCell{ width:130px; text-align:right; }
+    .qtyCell input{
+      width:96px;
       text-align:right;
-    }
-    .qty input{
-      width:100%;
       padding:10px 10px;
       border-radius:12px;
       font-size:14px;
     }
-    .codeCell{
-      width:92px;
-      color:var(--muted);
-      font-weight:800;
-    }
 
-    .footerNote{
+    /* Painel lateral (tabelas pequenas) */
+    .sideGrid{
+      margin-top:16px;
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:16px;
+    }
+    @media (max-width: 980px){ .sideGrid{ grid-template-columns:1fr; } }
+
+    .miniCard{
+      border:1px solid var(--stroke);
+      border-radius:var(--radius);
+      background: rgba(255,255,255,.03);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .miniHead{
+      padding:14px 14px;
+      font-weight:900;
+      border-bottom:1px solid var(--stroke);
+      background:
+        radial-gradient(900px 220px at 10% 0%, var(--wine2), transparent 62%),
+        rgba(255,255,255,.02);
+    }
+    .footNote{
       margin-top:14px;
       color:var(--muted);
       font-size:12px;
       line-height:1.4;
-      padding: 0 6px;
+      padding: 0 2px;
     }
 
     .toast{
@@ -375,7 +309,6 @@
       box-shadow: var(--shadow2);
     }
     .toast.show{ opacity:1; }
-
   </style>
 </head>
 
@@ -385,7 +318,7 @@
     <div class="topbar">
       <div class="brand">
         <div class="t1">Simulador PPR 2025</div>
-        <div class="t2">Coletivo (com ocorrências e faltas)</div>
+        <div class="t2">Coletivo (ocorrências e faltas)</div>
       </div>
 
       <div class="actions">
@@ -397,183 +330,144 @@
       <div class="badge">Coca-Cola FEMSA • Uso interno</div>
     </div>
 
-    <div class="grid">
-
-      <!-- ESQUERDA -->
-      <div class="card">
-        <div class="cardHead">
-          <div class="cardHeadRow">
-            <h2 class="hTitle">Simulador PPR Coletivo</h2>
-          </div>
-          <div class="hSub">
-            Considera: <b>Resultado Coletivo</b>, <b>Extra por Ocorrência</b> (calculado pela soma das ocorrências) e <b>Coeficiente por Faltas Não Justificadas</b>.
-          </div>
+    <!-- Card principal: RESULTADO + INPUTS (limpos) -->
+    <div class="card">
+      <div class="resultHead">
+        <div class="resultRow">
+          <h2 class="resultTitle">Simulador PPR Coletivo</h2>
         </div>
-
-        <div class="valueBox">
-          <div class="bigValue">
-            <div class="label">Seu PPR estimado</div>
-            <div class="money" id="pprBig">R$ 0</div>
-            <div class="baseLine" id="baseLine">Base: Salário Dez/25 • Meses • Resultado Coletivo • Extra • Coef. Faltas</div>
-          </div>
+        <div class="resultSub">
+          Cálculo em tempo real com base em <b>Resultado Coletivo</b>, <b>Extra por Ocorrências</b> e <b>Coeficiente por Faltas Não Justificadas</b>.
         </div>
+      </div>
 
-        <div class="form">
-          <div class="fields">
-            <div class="field">
-              <div class="fieldTop">
-                <div class="name">Resultado Coletivo</div>
-                <div class="hint">ex: 1,00</div>
-              </div>
-              <input id="inpColetivo" type="text" inputmode="decimal" placeholder="1,00" />
-            </div>
-
-            <div class="field">
-              <div class="fieldTop">
-                <div class="name">Salário Dez/25 (R$)</div>
-                <div class="hint">digite seu valor</div>
-              </div>
-              <input id="inpSalario" type="text" inputmode="decimal" placeholder="0,00" />
-            </div>
-
-            <div class="field">
-              <div class="fieldTop">
-                <div class="name">Meses Trabalhados</div>
-                <div class="hint">1–12</div>
-              </div>
-              <input id="inpMeses" type="number" min="1" max="12" step="1" placeholder="12" />
-            </div>
-
-            <div class="field">
-              <div class="fieldTop">
-                <div class="name">Faltas Não Justificadas</div>
-                <div class="hint">0+</div>
-              </div>
-              <input id="inpFaltas" type="number" min="0" step="1" placeholder="0" />
-            </div>
-          </div>
-        </div>
-
-        <div class="formula">
-          <div class="rowFormula">
-            <div class="chip red">
-              <div class="c1">Coletivo</div>
-              <div class="c2" id="vColetivo">0,0000</div>
-            </div>
-
-            <div class="op">+</div>
-
-            <div class="chip red">
-              <div class="c1">Extra</div>
-              <div class="c2" id="vExtra">0,0000</div>
-            </div>
-
-            <div class="op">×</div>
-
-            <div class="chip red">
-              <div class="c1">Coef. Faltas</div>
-              <div class="c2" id="vCoef">0,00</div>
-            </div>
-          </div>
-
-          <div class="rowFormula">
-            <div class="chip red">
-              <div class="c1">Salário</div>
-              <div class="c2" id="vSalario">R$ 0,00</div>
-            </div>
-
-            <div class="op">×</div>
-
-            <div class="chip">
-              <div class="c1">Meses/12</div>
-              <div class="c2" id="vMeses">0/12</div>
-            </div>
-
-            <div class="op">=</div>
-
-            <div class="chip">
-              <div class="c1">PPR (R$)</div>
-              <div class="c2" id="vPpr">R$ 0,00</div>
-            </div>
-          </div>
-
-          <div class="footerNote">
-            Valores arredondados para exibição. Pode haver desconto de IR e contribuições conforme regras vigentes.
+      <div class="pprBox">
+        <div class="pprLeft">
+          <div class="pprLabel">Seu PPR estimado</div>
+          <div class="pprValue" id="pprBig">R$ 0,00</div>
+          <div class="pprBase" id="pprBase">
+            Base: Salário Dez/25 • Meses • Coletivo • Extra • Coef. Faltas • Ocorrências
           </div>
         </div>
       </div>
 
-      <!-- DIREITA -->
-      <div class="card">
-        <div class="sideBody">
-
-          <div class="tableCard">
-            <div class="tableHead">Valor do Extra por Ocorrência</div>
-            <table>
-              <thead>
-                <tr>
-                  <th>Quantidade de Ocorrências</th>
-                  <th style="text-align:right">Valor do Extra</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>0,0 a 0,99</td><td style="text-align:right">0,20</td></tr>
-                <tr><td>1,0 a 2,99</td><td style="text-align:right">0,15</td></tr>
-                <tr><td>3,0 a 4,99</td><td style="text-align:right">0,10</td></tr>
-                <tr><td>5,0 a 6,99</td><td style="text-align:right">0,05</td></tr>
-                <tr><td>&ge; 7,00</td><td style="text-align:right">0</td></tr>
-              </tbody>
-            </table>
+      <div class="form">
+        <div class="fields">
+          <div class="field">
+            <label for="inpColetivo">Resultado Coletivo</label>
+            <input id="inpColetivo" type="text" inputmode="decimal" placeholder="1,00" />
+            <span class="hint">Ex.: 1,00</span>
           </div>
 
-          <div class="tableCard">
-            <div class="tableHead">Coeficiente por Faltas Não Justificadas</div>
-            <table>
-              <thead>
-                <tr>
-                  <th>Faltas Não Justificadas</th>
-                  <th style="text-align:right">Valor do Coeficiente</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>0</td><td style="text-align:right">1,00</td></tr>
-                <tr><td>1</td><td style="text-align:right">0,95</td></tr>
-                <tr><td>2</td><td style="text-align:right">0,90</td></tr>
-                <tr><td>3</td><td style="text-align:right">0,85</td></tr>
-                <tr><td>4</td><td style="text-align:right">0,80</td></tr>
-                <tr><td>5</td><td style="text-align:right">0,75</td></tr>
-                <tr><td>&ge; 6</td><td style="text-align:right">0</td></tr>
-              </tbody>
-            </table>
+          <div class="field">
+            <label for="inpSalario">Salário Dez/25 (R$)</label>
+            <input id="inpSalario" type="text" inputmode="decimal" placeholder="0,00" />
+            <span class="hint">Digite seu salário de Dezembro</span>
           </div>
 
-          <div class="tableCard" id="occCard">
-            <div class="tableHead">Tipos de Ocorrência (preencha as quantidades)</div>
+          <div class="field">
+            <label for="inpMeses">Meses Trabalhados</label>
+            <input id="inpMeses" type="number" min="1" max="12" step="1" placeholder="12" />
+            <span class="hint">De 1 a 12</span>
+          </div>
 
+          <div class="field">
+            <label for="inpFaltas">Faltas Não Justificadas</label>
+            <input id="inpFaltas" type="number" min="0" step="1" placeholder="0" />
+            <span class="hint">0 ou mais</span>
+          </div>
+        </div>
+
+        <!-- Memória de cálculo (discreta, sem “botões gigantes”) -->
+        <div class="memory" aria-live="polite">
+          <span class="pill">Extra: <span id="memExtra">0,20</span></span>
+          <span class="pill">Coef. Faltas: <span id="memCoef">1,00</span></span>
+          <span class="pill">Ocorrências: <span id="memOcc">0</span></span>
+          <span class="pill">Meses/12: <span id="memMeses">12/12</span></span>
+        </div>
+
+        <!-- Ocorrências: recolhível (UX melhor) -->
+        <details id="occDetails">
+          <summary>
+            <span class="sumLeft">
+              Tipos de Ocorrência (preencha as quantidades)
+              <span class="sumSub">Usado para calcular automaticamente o Extra</span>
+            </span>
+            <span class="pill">Total: <span id="occTotalSummary">0</span></span>
+          </summary>
+
+          <div class="occBody">
             <div class="occTools">
               <input id="occSearch" type="text" placeholder="Buscar por código ou descrição..." />
               <button class="btn" id="btnZerarOc" type="button">Zerar ocorrências</button>
             </div>
 
-            <div class="miniNote">
-              Dica: informe apenas o que você teve no ano. A soma das ocorrências define automaticamente o <b>Extra</b>.
+            <div class="table">
+              <table>
+                <thead>
+                  <tr>
+                    <th style="width:90px">Cód</th>
+                    <th>Descrição</th>
+                    <th style="width:130px; text-align:right;">Qtd</th>
+                  </tr>
+                </thead>
+                <tbody id="occBody"></tbody>
+              </table>
             </div>
 
-            <table>
-              <thead>
-                <tr>
-                  <th style="width:92px">Cód</th>
-                  <th>Descrição</th>
-                  <th style="text-align:right;width:120px">Qtd</th>
-                </tr>
-              </thead>
-              <tbody id="occBody"></tbody>
-            </table>
+            <div class="footNote">
+              Observação: valores exibidos são para simulação. Pode haver desconto de IR e contribuições conforme regras vigentes.
+            </div>
           </div>
+        </details>
+      </div>
+    </div>
 
+    <!-- Tabelas de referência (limpas, embaixo) -->
+    <div class="sideGrid">
+      <div class="miniCard">
+        <div class="miniHead">Valor do Extra por Ocorrência</div>
+        <div class="table">
+          <table>
+            <thead>
+              <tr>
+                <th>Quantidade de Ocorrências</th>
+                <th style="text-align:right">Valor do Extra</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>0,0 a 0,99</td><td style="text-align:right">0,20</td></tr>
+              <tr><td>1,0 a 2,99</td><td style="text-align:right">0,15</td></tr>
+              <tr><td>3,0 a 4,99</td><td style="text-align:right">0,10</td></tr>
+              <tr><td>5,0 a 6,99</td><td style="text-align:right">0,05</td></tr>
+              <tr><td>&ge; 7,00</td><td style="text-align:right">0</td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
 
+      <div class="miniCard">
+        <div class="miniHead">Coeficiente por Faltas Não Justificadas</div>
+        <div class="table">
+          <table>
+            <thead>
+              <tr>
+                <th>Faltas Não Justificadas</th>
+                <th style="text-align:right">Valor do Coeficiente</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>0</td><td style="text-align:right">1,00</td></tr>
+              <tr><td>1</td><td style="text-align:right">0,95</td></tr>
+              <tr><td>2</td><td style="text-align:right">0,90</td></tr>
+              <tr><td>3</td><td style="text-align:right">0,85</td></tr>
+              <tr><td>4</td><td style="text-align:right">0,80</td></tr>
+              <tr><td>5</td><td style="text-align:right">0,75</td></tr>
+              <tr><td>&ge; 6</td><td style="text-align:right">0</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
 
   </div>
@@ -581,7 +475,6 @@
   <div class="toast" id="toast">Copiado.</div>
 
   <script>
-    // ---------- Helpers ----------
     const $ = (id)=>document.getElementById(id);
 
     function showToast(msg){
@@ -596,12 +489,12 @@
       return Math.min(max, Math.max(min, n));
     }
 
-    // aceita "1,23" e "1.23"
+    // aceita "1,23" e "1.23" (remove milhar)
     function parseBRDecimal(v){
       if(v==null) return 0;
       const s = String(v).trim()
-        .replace(/\./g, "")      // remove separador milhar (se houver)
-        .replace(",", ".");      // decimal
+        .replace(/\./g, "")
+        .replace(",", ".");
       const n = Number(s);
       return Number.isFinite(n) ? n : 0;
     }
@@ -622,9 +515,8 @@
       });
     }
 
-    // ---------- Regras ----------
+    // Regras
     function extraByOccurrences(total){
-      // faixas conforme especificação
       if(total < 1) return 0.20;
       if(total < 3) return 0.15;
       if(total < 5) return 0.10;
@@ -642,7 +534,7 @@
       return 0.00; // >= 6
     }
 
-    // Tipos de ocorrência (peso 1 conforme lista recebida)
+    // Tipos de ocorrência
     const OCC = [
       { code: "210",  desc: "Licença Médica INSS" },
       { code: "340",  desc: "Suspensão" },
@@ -661,12 +553,15 @@
 
     const occState = Object.fromEntries(OCC.map(o=>[o.code, 0]));
 
+    function totalOccurrences(){
+      return Object.values(occState).reduce((a,b)=>a + (Number(b)||0), 0);
+    }
+
     function renderOccurrences(filter=""){
       const body = $("occBody");
       body.innerHTML = "";
 
       const f = filter.trim().toLowerCase();
-
       const rows = OCC.filter(o=>{
         if(!f) return true;
         return o.code.toLowerCase().includes(f) || o.desc.toLowerCase().includes(f);
@@ -676,42 +571,37 @@
         const tr = document.createElement("tr");
 
         const tdCode = document.createElement("td");
-        tdCode.className = "codeCell";
+        tdCode.className = "code";
         tdCode.textContent = o.code;
 
         const tdDesc = document.createElement("td");
         tdDesc.textContent = o.desc;
 
         const tdQty = document.createElement("td");
-        tdQty.className = "qty";
+        tdQty.className = "qtyCell";
 
         const inp = document.createElement("input");
         inp.type = "number";
         inp.min = "0";
         inp.step = "1";
         inp.value = occState[o.code] ?? 0;
+
         inp.addEventListener("input", ()=>{
           const v = Math.max(0, Math.floor(Number(inp.value || 0)));
           occState[o.code] = v;
           calcRealtime();
         });
 
-        tdQty.style.textAlign = "right";
         tdQty.appendChild(inp);
 
         tr.appendChild(tdCode);
         tr.appendChild(tdDesc);
         tr.appendChild(tdQty);
-
         body.appendChild(tr);
       });
     }
 
-    function totalOccurrences(){
-      return Object.values(occState).reduce((a,b)=>a + (Number(b)||0), 0);
-    }
-
-    // ---------- Cálculo em tempo real ----------
+    // Cálculo em tempo real (vibe do Individual)
     function calcRealtime(){
       const coletivo = parseBRDecimal($("inpColetivo").value);
       const salario  = parseBRDecimal($("inpSalario").value);
@@ -722,24 +612,21 @@
       const extra = extraByOccurrences(occTotal);
       const coef  = coefByFaltas(faltas);
 
-      // Fórmula:
       // PPR = Salário * (Meses/12) * (ResultadoColetivo + Extra) * CoefFaltas
       const base = (coletivo + extra) * coef;
       const ppr  = salario * (meses/12) * base;
 
-      $("vColetivo").textContent = formatBR(coletivo, 4);
-      $("vExtra").textContent    = formatBR(extra, 4);
-      $("vCoef").textContent     = formatBR(coef, 2);
-      $("vSalario").textContent  = formatMoney(salario);
-      $("vMeses").textContent    = `${meses}/12`;
-      $("vPpr").textContent      = formatMoney(ppr);
-      $("pprBig").textContent    = formatMoney(ppr);
+      $("pprBig").textContent = formatMoney(ppr);
 
-      // baseLine com contexto (inclui ocorrências)
-      $("baseLine").textContent =
+      $("memExtra").textContent = formatBR(extra, 2);
+      $("memCoef").textContent  = formatBR(coef, 2);
+      $("memOcc").textContent   = String(occTotal);
+      $("memMeses").textContent = `${meses}/12`;
+      $("occTotalSummary").textContent = String(occTotal);
+
+      $("pprBase").textContent =
         `Base: Salário Dez/25 • Meses • Coletivo (${formatBR(coletivo,2)}) + Extra (${formatBR(extra,2)}) • Coef. Faltas (${formatBR(coef,2)}) • Ocorrências (${occTotal})`;
 
-      // guarda para copiar
       window.__ppr_value = ppr;
     }
 
@@ -750,14 +637,14 @@
       $("inpFaltas").value   = "0";
 
       for(const k of Object.keys(occState)) occState[k]=0;
+
       $("occSearch").value = "";
       renderOccurrences("");
-
       calcRealtime();
       showToast("Resetado.");
     }
 
-    // ---------- Eventos ----------
+    // Eventos
     ["inpColetivo","inpSalario","inpMeses","inpFaltas"].forEach(id=>{
       $(id).addEventListener("input", calcRealtime);
     });
@@ -780,7 +667,6 @@
         await navigator.clipboard.writeText(txt);
         showToast("Valor copiado.");
       }catch(e){
-        // fallback
         const ta = document.createElement("textarea");
         ta.value = txt;
         document.body.appendChild(ta);
@@ -793,7 +679,7 @@
 
     $("btnReset").addEventListener("click", resetAll);
 
-    // ---------- Init ----------
+    // Init
     renderOccurrences("");
     resetAll();
   </script>
