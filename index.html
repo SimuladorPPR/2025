@@ -1,27 +1,138 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>Simulador PPR</title>
-    <style>
-        body {
-            font-family: Arial;
-            text-align: center;
-            margin-top: 100px;
-        }
-        a {
-            display: block;
-            margin: 20px;
-            font-size: 20px;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Simulador PPR</title>
+
+  <style>
+    :root{
+      --bg:#0f0f10;
+      --panel:#17181b;
+      --text:#f5f6f7;
+      --muted:#b8bcc6;
+      --red:#e60012;
+      --shadow: 0 10px 24px rgba(0,0,0,.35);
+      --radius: 16px;
+    }
+
+    body{
+      margin:0;
+      font-family: Arial, sans-serif;
+      background:
+        radial-gradient(1200px 700px at 20% 0%, rgba(230,0,18,.22), transparent 55%),
+        radial-gradient(900px 600px at 100% 20%, rgba(230,0,18,.10), transparent 60%),
+        var(--bg);
+      color:var(--text);
+    }
+
+    .wrap{
+      max-width:900px;
+      margin:0 auto;
+      padding:40px 24px;
+      text-align:center;
+    }
+
+    .hero{
+      margin-bottom:40px;
+    }
+
+    .hero h1{
+      font-size:36px;
+      margin-bottom:10px;
+    }
+
+    .hero p{
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    .cards{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:20px;
+    }
+
+    @media (max-width:700px){
+      .cards{
+        grid-template-columns:1fr;
+      }
+    }
+
+    .card{
+      background:rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:var(--radius);
+      padding:30px 20px;
+      box-shadow:var(--shadow);
+      transition:0.3s;
+      cursor:pointer;
+    }
+
+    .card:hover{
+      transform:translateY(-6px);
+      border-color:rgba(230,0,18,.6);
+    }
+
+    .card h2{
+      margin-bottom:12px;
+      font-size:22px;
+    }
+
+    .card p{
+      color:var(--muted);
+      font-size:13px;
+      margin-bottom:20px;
+    }
+
+    .btn{
+      display:inline-block;
+      padding:10px 16px;
+      border-radius:12px;
+      background:var(--red);
+      color:white;
+      text-decoration:none;
+      font-weight:bold;
+      font-size:14px;
+    }
+
+    footer{
+      margin-top:50px;
+      color:var(--muted);
+      font-size:12px;
+    }
+
+  </style>
 </head>
+
 <body>
+  <div class="wrap">
 
-<h1>SIMULADOR PPR 2024</h1>
+    <div class="hero">
+      <h1>Simulador PPR</h1>
+      <p>Selecione o perfil para calcular seu valor estimado de PPR</p>
+    </div>
 
-<a href="individual.html">Simulador Individual</a>
-<a href="executivo.html">Simulador Executivo</a>
+    <div class="cards">
 
+      <div class="card" onclick="location.href='individual.html'">
+        <h2>PPR Individual</h2>
+        <p>Simulação para colaboradores elegíveis ao modelo padrão de cálculo.</p>
+        <a href="individual.html" class="btn">Calcular</a>
+      </div>
+
+      <div class="card" onclick="location.href='executivo.html'">
+        <h2>PPR Executivo</h2>
+        <p>Simulação para Média Chefia e Gerência com regra diferenciada de pesos.</p>
+        <a href="executivo.html" class="btn">Calcular</a>
+      </div>
+
+    </div>
+
+    <footer>
+      Simulação interna – valores podem sofrer variação conforme regras vigentes, IR e acordos sindicais.
+    </footer>
+
+  </div>
 </body>
 </html>
