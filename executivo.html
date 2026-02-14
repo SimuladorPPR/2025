@@ -54,6 +54,7 @@
       cursor:pointer;border:none;border-radius:12px;padding:10px 12px;
       background: var(--panel2); color: var(--text);
       border:1px solid var(--border);
+      display:inline-flex; align-items:center; gap:8px;
     }
     button.primary{
       background: var(--red);
@@ -92,7 +93,19 @@
       outline:none;
     }
 
-    .hint{margin-top:10px;color:var(--muted);font-size:12px;line-height:1.4;}
+    /* Intervalo por nota - melhor posicionado */
+    .rangeCard{
+      margin-top:12px;
+      background: rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:14px;
+      padding:12px;
+      color:var(--text);
+    }
+    .rangeCard b{display:block;font-size:11px;color:var(--muted);margin-bottom:6px;}
+    .rangeCard .rangeLine{font-size:13px;font-weight:700;}
+    .rangeCard .rangeHint{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.35;}
+
     .error{
       display:none;
       margin-top:10px;
@@ -144,6 +157,13 @@
       </div>
 
       <div class="actions">
+        <button id="btnHome" title="Voltar para o início">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M3 10.5L12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1v-10.5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+          </svg>
+          Home
+        </button>
+
         <button class="primary" id="btnCopy">Copiar valor</button>
         <button id="btnReset">Resetar</button>
       </div>
@@ -165,21 +185,21 @@
 
           <div>
             <label for="InputTarget">Target (Salários)</label>
-            <input type="number" step="0.1" id="InputTarget" value="1" />
+            <input type="number" step="0.1" min="0" id="InputTarget" value="1" />
           </div>
 
           <div>
             <label for="salario">Salário (Dez/24)</label>
-            <input type="text" id="salario" placeholder="Ex.: 3.333" />
+            <input type="text" id="salario" inputmode="decimal" placeholder="Ex.: 3.333" />
           </div>
 
           <div>
-            <label for="meses_trabalhados">Meses trabalhados</label>
+            <label for="meses_trabalhados">Meses trabalhados (0 a 12)</label>
             <input type="number" id="meses_trabalhados" min="0" max="12" step="1" value="" />
           </div>
 
           <div>
-            <label for="nota_desempenho">Nota de desempenho</label>
+            <label for="nota_desempenho">Nota de desempenho (0 a 5)</label>
             <input type="number" id="nota_desempenho" min="0" max="5" step="1" value="" />
           </div>
 
@@ -189,16 +209,21 @@
           </div>
         </div>
 
-        <div class="hint">
-          Intervalo por nota: 1=[0,000–0,624] 2=[0,625–0,899] 3=[0,900–1,134] 4=[1,135–1,383] 5=[1,384–1,500]
+        <!-- Intervalo por nota (melhor UX: dinâmico) -->
+        <div class="rangeCard" id="rangeCard">
+          <b>Intervalo permitido do fator</b>
+          <div class="rangeLine" id="rangeLine">Selecione a nota para ver o intervalo.</div>
+          <div class="rangeHint">
+            Referência completa: 1=[0,000–0,624] 2=[0,625–0,899] 3=[0,900–1,134] 4=[1,135–1,383] 5=[1,384–1,500]
+          </div>
         </div>
 
         <div id="erro_fator" class="error">
-          Preencher o fator de desempenho dentro do intervalo da nota.
+          Fator fora do intervalo permitido para a nota selecionada.
         </div>
       </section>
 
-      <!-- MEMÓRIA (DETALHES DO CÁLCULO) -->
+      <!-- MEMÓRIA -->
       <section class="card">
         <h2>Detalhes do cálculo</h2>
 
@@ -237,156 +262,193 @@
   </div>
 
   <script>
-    // ========= FÓRMULAS COPIADAS do seu EXECUTIVO (mesma lógica) =========
-    function calcular() {
-      const salario = parseFloat(document.getElementById('salario').value
-        .replace(/\./g, '')
-        .replace(',', '.')
-        .replace('R$', '')
-        .trim());
+    // ===== Helpers =====
+    const clamp = (n, min, max) => Math.min(max, Math.max(min, n));
+    const fmtBRL0 = (n) => n.toLocaleString('pt-BR', { style:'currency', currency:'BRL', minimumFractionDigits:0, maximumFractionDigits:0 });
 
-      const mesesTrabalhados = parseInt(document.getElementById('meses_trabalhados').value, 10);
-      const notaDesempenho = parseFloat(document.getElementById('nota_desempenho').value);
+    function parseBRNumber(v){
+      if (!v) return NaN;
+      return parseFloat(
+        String(v)
+          .replace(/\s/g,'')
+          .replace('R$','')
+          .replace(/\./g,'')
+          .replace(',', '.')
+      );
+    }
+
+    function formatSalaryOnBlur(){
+      const el = document.getElementById('salario');
+      const n = parseBRNumber(el.value);
+      if (!isNaN(n)) {
+        el.value = n.toLocaleString('pt-BR', { minimumFractionDigits:0, maximumFractionDigits:0 });
+      }
+    }
+
+    function getRangeByNota(nota){
+      switch (nota) {
+        case 0: return {min:0.000, max:0.000};
+        case 1: return {min:0.000, max:0.624};
+        case 2: return {min:0.625, max:0.899};
+        case 3: return {min:0.900, max:1.134};
+        case 4: return {min:1.135, max:1.383};
+        case 5: return {min:1.384, max:1.500};
+        default: return {min:0.000, max:1.500};
+      }
+    }
+
+    function atualizarIntervaloNotaUI(){
+      const nota = parseInt(document.getElementById('nota_desempenho').value, 10);
+      const {min, max} = getRangeByNota(nota);
+      const rangeLine = document.getElementById('rangeLine');
+
+      if (isNaN(nota)) { rangeLine.textContent = "Selecione a nota para ver o intervalo."; return; }
+      if (nota === 0) { rangeLine.textContent = "Nota 0 → Não elegível (fator deve ser 0,000)."; return; }
+      rangeLine.textContent = `Nota ${nota} → fator permitido: ${min.toFixed(3)} a ${max.toFixed(3)}`;
+    }
+
+    function atualizarLimitesFator() {
+      const nota = parseInt(document.getElementById('nota_desempenho').value, 10);
+      const inputFator = document.getElementById('fator_desempenho');
+      const {min, max} = getRangeByNota(nota);
+
+      inputFator.min = min;
+      inputFator.max = max;
+
+      // clamp automático
+      const value = parseFloat(inputFator.value);
+      if (!isNaN(value)) {
+        const clamped = clamp(value, min, max);
+        if (clamped !== value) inputFator.value = clamped.toFixed(3);
+      }
+    }
+
+    function calcular() {
+      const salario = parseBRNumber(document.getElementById('salario').value);
+
+      let mesesTrabalhados = parseInt(document.getElementById('meses_trabalhados').value, 10);
+      mesesTrabalhados = clamp(isNaN(mesesTrabalhados) ? 0 : mesesTrabalhados, 0, 12); // ✅ limitador real
+
+      const notaDesempenho = parseInt(document.getElementById('nota_desempenho').value, 10);
       const fatorDesempenho = parseFloat(document.getElementById('fator_desempenho').value);
 
       const categoria = document.getElementById('categoria').value;
 
-      // Pesos (iguais ao seu arquivo)
+      // Pesos (como seu código original)
       let pesoNegocio, pesoDesempenho;
-      if (categoria === "Regra_2") {
-        pesoNegocio = 0.5;
-        pesoDesempenho = 0.5;
-      } else {
-        pesoNegocio = 0.3;
-        pesoDesempenho = 0.7;
-      }
+      if (categoria === "Regra_2") { pesoNegocio = 0.5; pesoDesempenho = 0.5; }
+      else { pesoNegocio = 0.3; pesoDesempenho = 0.7; }
 
-      if (isNaN(salario) || isNaN(mesesTrabalhados) || isNaN(notaDesempenho) || isNaN(fatorDesempenho)) {
+      // Target (validado)
+      let target = parseFloat(document.getElementById('InputTarget').value);
+      if (isNaN(target)) target = 1.0;
+      target = Math.max(0, target); // ✅ evita negativo
+
+      // Ajusta campo de meses se o usuário digitou acima de 12
+      const mesesEl = document.getElementById('meses_trabalhados');
+      if (mesesEl.value !== String(mesesTrabalhados)) mesesEl.value = String(mesesTrabalhados);
+
+      if (isNaN(salario) || isNaN(notaDesempenho)) {
         document.getElementById('ppr_total').textContent = "R$ 0";
+        document.getElementById('hero_meta').textContent =
+          "Base: Salário Dez/24 • Meses • Nota • Fator • Target • Regra de Pesos";
         return;
       }
 
-      const targetNegocio = parseFloat(document.getElementById('InputTarget').value);
-      const targetIndividual = parseFloat(document.getElementById('InputTarget').value);
-
-      // Resultado do Negócio (igual ao seu arquivo)
-      const notaIndicadorNegocio = (notaDesempenho === 0) ? 0 : 1.6261; // indicador negócio
-      const indicadorNegocio = notaIndicadorNegocio * pesoNegocio;
-      const proporcaoMesesNegocio = mesesTrabalhados / 12;
-      const resultadoNegocio = indicadorNegocio * targetNegocio * salario * proporcaoMesesNegocio;
-
-      // Resultado Individual (igual ao seu arquivo)
-      const notaPesoIndividual = fatorDesempenho * pesoDesempenho;
-      const resultadoIndividual = notaPesoIndividual * targetIndividual * salario * proporcaoMesesNegocio;
-
-      // Total (igual ao seu arquivo executivo)
-      const baseCalculo = resultadoNegocio + resultadoIndividual;
-      let totalPPR;
-
-      switch (notaDesempenho) {
-        case 0: totalPPR = "Não Elegível"; break;
-        case 1: totalPPR = "Não Elegível"; break;
-        case 2: totalPPR = baseCalculo * 0.75; break;
-        default: totalPPR = baseCalculo * 1.00; break;
+      // Nota 0 = não elegível
+      if (notaDesempenho === 0) {
+        document.getElementById('ppr_total').textContent = "Não elegível";
+        document.getElementById('hero_meta').textContent = `Não elegível • Meses (${mesesTrabalhados}/12)`;
+        // Zera memória (mínimo)
+        document.getElementById('nota_indicador_negocio').innerText = "0";
+        document.getElementById('indicador_negocio').innerText = "0";
+        document.getElementById('target_negocio').innerText = target.toFixed(2);
+        document.getElementById('salario_negocio').innerText = fmtBRL0(salario);
+        document.getElementById('proporcao_mes_negocio').innerText = (mesesTrabalhados/12).toFixed(2);
+        document.getElementById('resultado_negocio').innerText = "0";
+        document.getElementById('fator_desempenho_individual').innerText = "0";
+        document.getElementById('peso_indicador_individual').innerText = pesoDesempenho.toFixed(2);
+        document.getElementById('nota_peso_individual').innerText = "0";
+        document.getElementById('resultado_individual').innerText = "0";
+        return;
       }
 
-      if (typeof totalPPR === "number" && !isNaN(totalPPR)) {
-        totalPPR = totalPPR.toLocaleString('pt-BR', {
-          style: 'currency',
-          currency: 'BRL',
-          minimumFractionDigits: 0,
-          maximumFractionDigits: 0
-        });
-      } else {
-        totalPPR = "Não Elegível";
-      }
-
-      document.getElementById('ppr_total').textContent = totalPPR;
-
-      // Meta do topo (ajuda o usuário a confiar)
-      document.getElementById('hero_meta').textContent =
-        `Base: Salário Dez/24 • Meses (${mesesTrabalhados}/12) • Nota ${notaDesempenho} • Fator ${fatorDesempenho} • Target ${targetNegocio} • ${categoria === "Regra_2" ? "Gerente" : "Média Chefia"}`;
-
-      // ===== Atualiza memória (IDs) =====
-      document.getElementById('nota_indicador_negocio').innerText =
-        isNaN(notaIndicadorNegocio) ? "-" : notaIndicadorNegocio.toFixed(4);
-
-      document.getElementById('peso_indicador_negocio').innerText =
-        isNaN(pesoNegocio) ? "-" : pesoNegocio.toFixed(2);
-
-      document.getElementById('indicador_negocio').innerText =
-        isNaN(indicadorNegocio) ? "-" : indicadorNegocio.toFixed(2);
-
-      document.getElementById('target_negocio').innerText =
-        isNaN(targetNegocio) ? "-" : targetNegocio.toFixed(2);
-
-      document.getElementById('salario_negocio').innerText =
-        isNaN(salario) ? "-" : salario.toLocaleString('pt-BR', {
-          style: 'currency',
-          currency: 'BRL',
-          minimumFractionDigits: 0,
-          maximumFractionDigits: 0
-        });
-
-      document.getElementById('proporcao_mes_negocio').innerText =
-        isNaN(proporcaoMesesNegocio) ? "-" : proporcaoMesesNegocio.toFixed(2);
-
-      document.getElementById('resultado_negocio').innerText =
-        isNaN(resultadoNegocio) ? "-" : resultadoNegocio.toLocaleString('pt-BR', {
-          style: 'currency',
-          currency: 'BRL',
-          minimumFractionDigits: 0,
-          maximumFractionDigits: 0
-        });
-
-      document.getElementById('fator_desempenho_individual').innerText =
-        isNaN(fatorDesempenho) ? "-" : fatorDesempenho.toFixed(3);
-
-      document.getElementById('peso_indicador_individual').innerText =
-        isNaN(pesoDesempenho) ? "-" : pesoDesempenho.toFixed(2);
-
-      document.getElementById('nota_peso_individual').innerText =
-        isNaN(notaPesoIndividual) ? "-" : notaPesoIndividual.toFixed(2);
-
-      document.getElementById('resultado_individual').innerText =
-        isNaN(resultadoIndividual) ? "-" : resultadoIndividual.toLocaleString('pt-BR', {
-          style: 'currency',
-          currency: 'BRL',
-          minimumFractionDigits: 0,
-          maximumFractionDigits: 0
-        });
-    }
-
-    // Validação do fator por nota (mesma regra do seu código)
-    function atualizarLimitesFator() {
-      const notaDesempenho = parseFloat(document.getElementById('nota_desempenho').value);
-      const inputFator = document.getElementById('fator_desempenho');
+      // Validação do fator por nota (não calcula se inválido)
+      const {min, max} = getRangeByNota(notaDesempenho);
       const erroFator = document.getElementById('erro_fator');
 
-      let min, max;
-      switch (notaDesempenho) {
-        case 0: min = 0.000; max = 0.000; break;
-        case 1: min = 0.000; max = 0.624; break;
-        case 2: min = 0.625; max = 0.899; break;
-        case 3: min = 0.900; max = 1.134; break;
-        case 4: min = 1.135; max = 1.383; break;
-        case 5: min = 1.384; max = 1.500; break;
-        default: min = 0; max = 1.5;
+      const fatorValido = (!isNaN(fatorDesempenho) && fatorDesempenho >= min && fatorDesempenho <= max);
+      if (!fatorValido) {
+        erroFator.style.display = 'block';
+        document.getElementById('ppr_total').textContent = "R$ 0";
+        document.getElementById('hero_meta').textContent =
+          `Ajuste o fator (Nota ${notaDesempenho}: ${min.toFixed(3)} a ${max.toFixed(3)}) • Meses (${mesesTrabalhados}/12)`;
+        return;
+      } else {
+        erroFator.style.display = 'none';
       }
-      inputFator.min = min;
-      inputFator.max = max;
 
-      const value = parseFloat(inputFator.value);
-      if (value < min || value > max || isNaN(value)) erroFator.style.display = 'block';
-      else erroFator.style.display = 'none';
+      // Indicador de negócio 2025
+      const notaIndicadorNegocio = 1.6261;
+
+      const proporcaoMeses = mesesTrabalhados / 12;
+
+      // Resultado do negócio
+      const indicadorNegocio = notaIndicadorNegocio * pesoNegocio;
+      const resultadoNegocio = indicadorNegocio * target * salario * proporcaoMeses;
+
+      // Resultado individual
+      let resultadoIndividual;
+      let notaPesoIndividual;
+
+      // ✅ Nota 1: zera individual, mantém negócio
+      if (notaDesempenho === 1) {
+        notaPesoIndividual = 0;
+        resultadoIndividual = 0;
+      } else {
+        notaPesoIndividual = fatorDesempenho * pesoDesempenho;
+        resultadoIndividual = notaPesoIndividual * target * salario * proporcaoMeses;
+      }
+
+      const baseCalculo = resultadoNegocio + resultadoIndividual;
+
+      // Total: Nota 2 = 75% do baseCalculo; demais = 100%
+      let totalPPR;
+      if (notaDesempenho === 2) totalPPR = baseCalculo * 0.75;
+      else totalPPR = baseCalculo * 1.00;
+
+      document.getElementById('ppr_total').textContent = fmtBRL0(totalPPR);
+
+      document.getElementById('hero_meta').textContent =
+        `Base: Salário Dez/24 • Meses (${mesesTrabalhados}/12) • Nota ${notaDesempenho} • Fator ${fatorDesempenho.toFixed(3)} • Target ${target.toFixed(2)} • ${categoria === "Regra_2" ? "Gerente" : "Média Chefia"}`;
+
+      // Memória
+      document.getElementById('nota_indicador_negocio').innerText = notaIndicadorNegocio.toFixed(4);
+      document.getElementById('peso_indicador_negocio').innerText = pesoNegocio.toFixed(2);
+      document.getElementById('indicador_negocio').innerText = indicadorNegocio.toFixed(2);
+
+      document.getElementById('target_negocio').innerText = target.toFixed(2);
+      document.getElementById('salario_negocio').innerText = fmtBRL0(salario);
+      document.getElementById('proporcao_mes_negocio').innerText = proporcaoMeses.toFixed(2);
+      document.getElementById('resultado_negocio').innerText = fmtBRL0(resultadoNegocio);
+
+      document.getElementById('fator_desempenho_individual').innerText = fatorDesempenho.toFixed(3);
+      document.getElementById('peso_indicador_individual').innerText = pesoDesempenho.toFixed(2);
+      document.getElementById('nota_peso_individual').innerText = notaPesoIndividual.toFixed(2);
+      document.getElementById('resultado_individual').innerText = fmtBRL0(resultadoIndividual);
     }
 
     function atualizarValores(){
+      atualizarIntervaloNotaUI();
       atualizarLimitesFator();
       calcular();
     }
 
     // Botões
+    document.getElementById('btnHome').addEventListener('click', () => {
+      window.location.href = 'index.html';
+    });
+
     document.getElementById('btnCopy').addEventListener('click', async () => {
       const v = document.getElementById('ppr_total').textContent;
       try { await navigator.clipboard.writeText(v); } catch(e) {}
@@ -402,12 +464,16 @@
       atualizarValores();
     });
 
-    // Eventos (igual sua ideia: recalcula ao digitar)
+    // Eventos
     ['categoria','InputTarget','salario','meses_trabalhados','nota_desempenho','fator_desempenho']
       .forEach(id => document.getElementById(id).addEventListener('input', atualizarValores));
+
+    document.getElementById('salario').addEventListener('blur', () => {
+      formatSalaryOnBlur();
+      atualizarValores();
+    });
 
     window.onload = atualizarValores;
   </script>
 </body>
 </html>
-
