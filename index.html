@@ -27,7 +27,7 @@
     }
 
     .wrap{
-      max-width:900px;
+      max-width:1100px;
       margin:0 auto;
       padding:40px 24px;
       text-align:center;
@@ -49,11 +49,17 @@
 
     .cards{
       display:grid;
-      grid-template-columns:1fr 1fr;
+      grid-template-columns:repeat(3, 1fr);
       gap:20px;
     }
 
-    @media (max-width:700px){
+    @media (max-width:900px){
+      .cards{
+        grid-template-columns:1fr 1fr;
+      }
+    }
+
+    @media (max-width:600px){
       .cards{
         grid-template-columns:1fr;
       }
@@ -125,6 +131,12 @@
         <h2>PPR Executivo</h2>
         <p>Simulação para Média Chefia e Gerência com regra diferenciada de pesos.</p>
         <a href="executivo.html" class="btn">Calcular</a>
+      </div>
+
+      <div class="card" onclick="location.href='coletivo.html'">
+        <h2>PPR Coletivo</h2>
+        <p>Simulação considerando resultado coletivo, ocorrências e coeficiente por faltas.</p>
+        <a href="coletivo.html" class="btn">Calcular</a>
       </div>
 
     </div>
