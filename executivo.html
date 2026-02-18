@@ -189,7 +189,7 @@
           </div>
 
           <div>
-            <label for="salario">Salário (Dez/24)</label>
+            <label for="salario">Salário (Dez/25)</label>
             <input type="text" id="salario" inputmode="decimal" placeholder="Ex.: 3.333" />
           </div>
 
@@ -351,7 +351,7 @@
       if (isNaN(salario) || isNaN(notaDesempenho)) {
         document.getElementById('ppr_total').textContent = "R$ 0";
         document.getElementById('hero_meta').textContent =
-          "Base: Salário Dez/24 • Meses • Nota • Fator • Target • Regra de Pesos";
+          "Base: Salário Dez/25 • Meses • Nota • Fator • Target • Regra de Pesos";
         return;
       }
 
@@ -420,7 +420,7 @@
       document.getElementById('ppr_total').textContent = fmtBRL0(totalPPR);
 
       document.getElementById('hero_meta').textContent =
-        `Base: Salário Dez/24 • Meses (${mesesTrabalhados}/12) • Nota ${notaDesempenho} • Fator ${fatorDesempenho.toFixed(3)} • Target ${target.toFixed(2)} • ${categoria === "Regra_2" ? "Gerente" : "Média Chefia"}`;
+        `Base: Salário Dez/25 • Meses (${mesesTrabalhados}/12) • Nota ${notaDesempenho} • Fator ${fatorDesempenho.toFixed(3)} • Target ${target.toFixed(2)} • ${categoria === "Regra_2" ? "Gerente" : "Média Chefia"}`;
 
       // Memória
       document.getElementById('nota_indicador_negocio').innerText = notaIndicadorNegocio.toFixed(4);
@@ -477,4 +477,5 @@
   </script>
 </body>
 </html>
+
 
