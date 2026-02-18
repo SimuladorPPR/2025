@@ -299,7 +299,7 @@
       // Se ainda não tiver valores mínimos, apenas zera exibição
       if (isNaN(salario) || isNaN(notaDesempenho)) {
         document.getElementById('ppr_total').textContent = "R$ 0";
-        document.getElementById('hero_meta').textContent = "Base: Salário Dez/24 • Meses • Nota • Fator";
+        document.getElementById('hero_meta').textContent = "Base: Salário Dez/25 • Meses • Nota • Fator";
         return;
       }
 
@@ -376,7 +376,7 @@
       document.getElementById('ppr_total').textContent = fmtBRL0(totalPPR);
 
       document.getElementById('hero_meta').textContent =
-        `Base: Salário Dez/24 • Meses (${mesesTrabalhados}/12) • Nota ${notaDesempenho} • Fator ${fatorDesempenho.toFixed(3)}`;
+        `Base: Salário Dez/25 • Meses (${mesesTrabalhados}/12) • Nota ${notaDesempenho} • Fator ${fatorDesempenho.toFixed(3)}`;
 
       // Memória
       document.getElementById('nota_indicador_negocio').innerText = notaIndicadorNegocio.toFixed(4);
@@ -463,4 +463,5 @@
   </script>
 </body>
 </html>
+
 
